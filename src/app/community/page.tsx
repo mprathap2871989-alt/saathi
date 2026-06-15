@@ -18,16 +18,16 @@ export const metadata: Metadata = {
 const POSTS_PER_PAGE = 15;
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     search?:   string;
     category?: string;
     sort?:     string;
     page?:     string;
-  };
+  }>;
 }
 
 async function PostsList({ searchParams }: PageProps) {
-  const { search, category, sort, page } = searchParams;
+  const { search, category, sort, page } = await searchParams;
   const currentPage = Math.max(1, Number(page) || 1);
 
   const posts = await getPosts({
@@ -86,8 +86,9 @@ async function PostsList({ searchParams }: PageProps) {
   );
 }
 
-export default function CommunityPage({ searchParams }: PageProps) {
-  const { category } = searchParams;
+export default async function CommunityPage({ searchParams }: PageProps) {
+  const resolvedParams = await searchParams;
+  const { category } = resolvedParams;
   const activeCat = category ? getCategoryById(category) : null;
 
   return (
@@ -118,9 +119,9 @@ export default function CommunityPage({ searchParams }: PageProps) {
         <div className="mt-5">
           <Suspense fallback={<div className="h-28 bg-stone-100 rounded-xl animate-pulse" />}>
             <FeedFilters
-              currentSearch={searchParams.search}
-              currentCategory={searchParams.category}
-              currentSort={searchParams.sort}
+              currentSearch={resolvedParams.search}
+              currentCategory={resolvedParams.category}
+              currentSort={resolvedParams.sort}
             />
           </Suspense>
         </div>
