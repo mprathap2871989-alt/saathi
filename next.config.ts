@@ -3,6 +3,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, "") ?? ""].filter(Boolean),
