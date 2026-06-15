@@ -1,4 +1,3 @@
-// src/app/category/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
@@ -8,37 +7,36 @@ import { PostCard, CrisisBanner } from "@/components/PostCard";
 import { getPosts } from "@/actions/posts";
 import { getCategoryById, getCategoryColors, CATEGORIES } from "@/lib/categories";
 
-interface PageProps { params: { slug: string } }
+interface PageProps { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const cat = getCategoryById(params.slug);
+  const { slug } = await params;
+  const cat = getCategoryById(slug);
   return {
-    title: `${cat.label} — Saathi Community`,
+    title: `${cat.label} - Saathi Community`,
     description: `Stories, support, and shared experiences in ${cat.label}. ${cat.desc}`,
   };
 }
 
-// Pre-generate all category static routes
 export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ slug: c.id }));
 }
 
-export const revalidate = 120; // ISR: 2 minutes
+export const revalidate = 120;
 
 export default async function CategoryPage({ params }: PageProps) {
-  const cat = getCategoryById(params.slug);
+  const { slug } = await params;
+  const cat = getCategoryById(slug);
 
-  // If slug doesn't match any known category ID, 404
-  if (!CATEGORIES.find((c) => c.id === params.slug)) notFound();
+  if (!CATEGORIES.find((c) => c.id === slug)) notFound();
 
-  const posts = await getPosts({ categoryId: params.slug, limit: 30 });
-  const cl    = getCategoryColors(params.slug);
+  const posts = await getPosts({ categoryId: slug, limit: 30 });
+  const cl = getCategoryColors(slug);
 
   return (
     <>
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 py-6">
-        {/* Back */}
         <Link
           href="/community"
           className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-4"
@@ -46,7 +44,6 @@ export default async function CategoryPage({ params }: PageProps) {
           <ArrowLeft size={15} /> All topics
         </Link>
 
-        {/* Category header */}
         <div className={`${cl.soft} rounded-2xl p-5 mb-5 border border-white/80 shadow-sm`}>
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -58,7 +55,7 @@ export default async function CategoryPage({ params }: PageProps) {
               </p>
             </div>
             <Link
-              href={`/create?category=${params.slug}`}
+              href={`/create?category=${slug}`}
               className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-emerald-700 text-white text-xs font-medium rounded-full hover:bg-emerald-800 transition-colors"
             >
               <Plus size={13} /> Share
@@ -68,17 +65,14 @@ export default async function CategoryPage({ params }: PageProps) {
 
         <CrisisBanner />
 
-        {/* Posts */}
         <div className="mt-5 space-y-3">
           {posts.length === 0 ? (
             <div className="text-center py-14 bg-white rounded-xl border border-stone-200">
               <span className="text-4xl block mb-3">{cat.emoji}</span>
               <p className="font-semibold text-gray-700">No stories here yet.</p>
-              <p className="text-sm text-gray-400 mt-1 mb-4">
-                Be the first to share in this space.
-              </p>
+              <p className="text-sm text-gray-400 mt-1 mb-4">Be the first to share in this space.</p>
               <Link
-                href={`/create?category=${params.slug}`}
+                href={`/create?category=${slug}`}
                 className="inline-block px-5 py-2.5 bg-emerald-700 text-white text-sm font-semibold rounded-full hover:bg-emerald-800 transition-colors"
               >
                 Share Your Story
@@ -101,11 +95,10 @@ export default async function CategoryPage({ params }: PageProps) {
           )}
         </div>
 
-        {/* Browse other categories */}
         <div className="mt-10 pt-6 border-t border-stone-200">
           <p className="text-sm font-semibold text-gray-700 mb-3">Browse other topics</p>
           <div className="flex flex-wrap gap-2">
-            {CATEGORIES.filter((c) => c.id !== params.slug).map((c) => (
+            {CATEGORIES.filter((c) => c.id !== slug).map((c) => (
               <Link
                 key={c.id}
                 href={`/category/${c.id}`}
