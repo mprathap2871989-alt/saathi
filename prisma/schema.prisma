@@ -1,0 +1,145 @@
+// prisma/schema.prisma
+// Run:  npx prisma db push        (development)
+//       npx prisma migrate deploy (production)
+//       npm run db:seed
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // DATABASE_URL  → Supabase Transaction pooler (port 6543) — used by the app at runtime
+  // DIRECT_URL    → Supabase direct connection  (port 5432) — used by Prisma CLI for migrations
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────────────
+// USER
+// Created automatically after Clerk sign-up
+// via webhook or on first authenticated request
+// ─────────────────────────────────────────────
+model User {
+  id          String   @id @default(cuid())
+  clerkId     String   @unique
+  username    String   @unique   // e.g. "BraveSoul123" — auto-generated
+  isAdmin     Boolean  @default(false)
+  isSuspended Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  posts        Post[]
+  comments     Comment[]
+  helpfulVotes HelpfulVote[]
+  reports      Report[]
+
+  @@index([clerkId])
+}
+
+// ─────────────────────────────────────────────
+// CATEGORY
+// Seeded once. Not user-created.
+// ─────────────────────────────────────────────
+model Category {
+  id    String @id  // e.g. "students", "career"
+  label String
+  emoji String
+  desc  String
+  order Int    @default(0)
+
+  posts Post[]
+}
+
+// ─────────────────────────────────────────────
+// POST
+// ─────────────────────────────────────────────
+model Post {
+  id         String   @id @default(cuid())
+  title      String   @db.VarChar(200)
+  story      String   @db.Text
+  isRemoved  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId     String
+  categoryId String
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+
+  comments     Comment[]
+  helpfulVotes HelpfulVote[]
+  reports      Report[]
+
+  @@index([categoryId])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────
+// COMMENT
+// ─────────────────────────────────────────────
+model Comment {
+  id        String   @id @default(cuid())
+  text      String   @db.Text
+  isRemoved Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  helpfulVotes HelpfulVote[]
+  reports      Report[]
+
+  @@index([postId])
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────
+// HELPFUL VOTE
+// One per user per post/comment.
+// ─────────────────────────────────────────────
+model HelpfulVote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId    String
+  postId    String?
+  commentId String?
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  // Prevent duplicate votes
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@index([postId])
+  @@index([commentId])
+}
+
+// ─────────────────────────────────────────────
+// REPORT
+// Can target a post or a comment, not both.
+// ─────────────────────────────────────────────
+model Report {
+  id        String   @id @default(cuid())
+  reason    String
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  reporterId String
+  postId     String?
+  commentId  String?
+
+  reporter User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  post     Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment  Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([resolved])
+  @@index([createdAt])
+}

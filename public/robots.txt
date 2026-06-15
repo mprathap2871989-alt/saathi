@@ -1,0 +1,19 @@
+# robots.txt for Saathi
+# Individual posts, profiles, and admin must not be indexed.
+# Mental health content posted by users must never surface in search results.
+
+User-agent: *
+
+# User-generated content — never index individual posts
+Disallow: /post/
+
+# User profiles — anonymous by design; search indexing breaks that promise
+Disallow: /profile/
+
+# Admin — must not be publicly discoverable
+Disallow: /admin
+
+# Allow everything else
+Allow: /
+
+Sitemap: https://saathi.app/sitemap.xml
