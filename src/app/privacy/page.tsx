@@ -1,12 +1,12 @@
 // src/app/privacy/page.tsx
-// Static page — no auth required, no DB queries, publicly accessible.
+// Static page  no auth required, no DB queries, publicly accessible.
 
 import Link from "next/link";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Saathi",
+  title: "Privacy Policy  Saathi",
   description:
     "How Saathi collects, uses, and protects your information. Plain language, no legalese.",
 };
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 // Bump this date whenever a material change is made to the policy.
 const LAST_UPDATED = "June 2025";
 
-// ── Section components ────────────────────────────────────────────────────────
+//  Section components 
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -35,7 +35,7 @@ function Bullets({ items }: { items: [string, string][] }) {
     <ul className="space-y-2.5 mb-3">
       {items.map(([label, desc]) => (
         <li key={label} className="flex gap-2.5 text-[15px] text-gray-700 leading-relaxed">
-          <span className="text-emerald-600 mt-0.5 flex-shrink-0">•</span>
+          <span className="text-emerald-600 mt-0.5 flex-shrink-0"></span>
           <span>
             <strong className="font-semibold text-gray-900">{label}: </strong>
             {desc}
@@ -51,7 +51,7 @@ function CheckList({ items }: { items: string[] }) {
     <ul className="space-y-1.5 mb-3">
       {items.map((item) => (
         <li key={item} className="flex gap-2 text-[15px] text-gray-600 leading-relaxed">
-          <span className="text-emerald-600 font-bold flex-shrink-0 mt-0.5">✓</span>
+          <span className="text-emerald-600 font-bold flex-shrink-0 mt-0.5"></span>
           {item}
         </li>
       ))}
@@ -77,7 +77,7 @@ function Callout({
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+//  Page 
 
 export default function PrivacyPage() {
   return (
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 py-10">
 
-        {/* ── Header ── */}
+        {/*  Header  */}
         <div className="mb-8">
           <h1 className="font-serif text-3xl font-bold text-gray-900 mb-2">
             Privacy Policy
@@ -104,7 +104,7 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        {/* ── Vulnerable-user notice ── */}
+        {/*  Vulnerable-user notice  */}
         <Callout variant="warning">
           <strong className="font-semibold">Important:</strong> Saathi is a peer
           support community, not a mental health service. We are not therapists,
@@ -143,7 +143,7 @@ export default function PrivacyPage() {
               items={[
                 [
                   "Email address",
-                  "Collected by Clerk (our sign-in provider) when you create an account. Your email is stored in Clerk's systems only — it is never written to our own database.",
+                  "Collected by Clerk (our sign-in provider) when you create an account. Your email is stored in Clerk's systems only  it is never written to our own database.",
                 ],
                 [
                   "Anonymous username",
@@ -209,7 +209,7 @@ export default function PrivacyPage() {
                 ],
                 [
                   "Admin email alerts",
-                  "When a report is filed — by a user or automatically — an email notification is sent to our moderation team's email address via Resend. This email includes the report reason, the reporter's anonymous username, and a snippet of the reported content. No other parties receive this email.",
+                  "When a report is filed  by a user or automatically  an email notification is sent to our moderation team's email address via Resend. This email includes the report reason, the reporter's anonymous username, and a snippet of the reported content. No other parties receive this email.",
                 ],
                 [
                   "Rate limiting",
@@ -231,7 +231,7 @@ export default function PrivacyPage() {
 
           {/* 5 */}
           <section>
-            <SectionHeading>5. Anonymous posting — what it means and what it does not mean</SectionHeading>
+            <SectionHeading>5. Anonymous posting  what it means and what it does not mean</SectionHeading>
             <Para>
               When you post on Saathi, your real name and email address are never
               shown to other users. You appear only as your anonymous username
@@ -263,7 +263,7 @@ export default function PrivacyPage() {
             />
             <Para>
               We strongly advise against including details in your posts that could
-              identify you — such as your full name, your workplace, your exact
+              identify you  such as your full name, your workplace, your exact
               location, or identifying details about others.
             </Para>
           </section>
@@ -300,7 +300,7 @@ export default function PrivacyPage() {
               <strong className="font-semibold">This is not crisis intervention.</strong>{" "}
               The keyword scan is a simple automated text check. It can miss
               content that needs attention and it can flag content that does not.
-              Our moderation team are volunteers or independent operators — not
+              Our moderation team are volunteers or independent operators  not
               trained mental health professionals. We cannot guarantee a response
               time or an intervention outcome. If you are in immediate danger,
               call 112 or iCall: 9152987821.
@@ -416,7 +416,7 @@ export default function PrivacyPage() {
                 ],
                 [
                   "Clerk",
-                  "Your email address and sign-in account are held by Clerk per their own retention policy. Deleting your Saathi account does not automatically delete your Clerk account — you must do this separately in Clerk's account settings, or ask us to process it.",
+                  "Your email address and sign-in account are held by Clerk per their own retention policy. Deleting your Saathi account does not automatically delete your Clerk account  you must do this separately in Clerk's account settings, or ask us to process it.",
                 ],
                 [
                   "Backups",
@@ -472,7 +472,7 @@ export default function PrivacyPage() {
 
         </div>
 
-        {/* ── Footer nav ── */}
+        {/*  Footer nav  */}
         <div className="mt-8 pt-6 border-t border-stone-200 flex flex-wrap gap-4 text-sm text-gray-400">
           <Link
             href="/guidelines"
