@@ -10,12 +10,13 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  preload: false,
 });
-
 const lora = Lora({
   subsets: ["latin"],
   variable: "--font-lora",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
