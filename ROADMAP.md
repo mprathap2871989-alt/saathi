@@ -9,16 +9,16 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 
 - [x] Real content blocklist (`obscenity`-based, replaces `["slur1","slur2"]` placeholder) — Phase 1
 - [x] Category pre-selection from `?category=` on `/create` — Phase 1
+- [x] Monetization readiness audit — approved, no schema changes required before launch
+- [x] `BUSINESS_PRINCIPLES.md` + ADR-0001 (tenant isolation via nullable `organizationId`) — non-blocking documentation, per audit recommendation
 
 ## Current
 
-- **Task:** none in progress — awaiting next task selection
+- **Task:** `suspendUser` self-suspend guard
 - **Phase:** Phase 1 — Quick Wins
 
 ## Upcoming (Phase 1 — Quick Wins)
 
-- [ ] `suspendUser` self-suspend guard
-- [ ] `suspendUser` self-suspend guard
 - [ ] Report rate limiting (reuse existing daily-count pattern)
 - [ ] Wire `resend` for admin report-alert emails
 - [ ] Decide fate of unused `next-safe-action` dependency
