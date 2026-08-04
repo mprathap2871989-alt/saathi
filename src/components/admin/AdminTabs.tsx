@@ -52,11 +52,11 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
   const [reports,  setReports]  = useState(initReports);
   const [posts,    setPosts]    = useState(initPosts);
   const [users,    setUsers]    = useState(initUsers);
-  const [toast,    setToast]    = useState<string | null>(null);
+  const [toast,    setToast]    = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const showToast = (msg: string) => {
-    setToast(msg);
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -88,7 +88,11 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
   const handleSuspend = (userId: string) => {
     if (!confirm("Suspend this user? They will no longer be able to post.")) return;
     startTransition(async () => {
-      await suspendUser(userId);
+      const result = await suspendUser(userId);
+      if (result?.error) {
+        showToast(result.error, "error");
+        return;
+      }
       setUsers((u) => u.map((x) => x.id === userId ? { ...x, isSuspended: true } : x));
       showToast("User suspended.");
     });
@@ -297,8 +301,13 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-800 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
-          <CheckCircle size={15} /> {toast}
+        <div
+          className={cn(
+            "fixed bottom-6 left-1/2 -translate-x-1/2 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50",
+            toast.type === "error" ? "bg-red-700" : "bg-emerald-800"
+          )}
+        >
+          {toast.type === "error" ? <AlertTriangle size={15} /> : <CheckCircle size={15} />} {toast.message}
         </div>
       )}
     </div>

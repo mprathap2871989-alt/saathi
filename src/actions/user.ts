@@ -93,6 +93,10 @@ export async function suspendUser(targetUserId: string) {
   const admin = await prisma.user.findUnique({ where: { clerkId } });
   if (!admin?.isAdmin) return { error: "Unauthorized" };
 
+  if (admin.id === targetUserId) {
+    return { error: "You cannot suspend your own account." };
+  }
+
   await prisma.user.update({
     where: { id: targetUserId },
     data:  { isSuspended: true },

@@ -11,10 +11,11 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 - [x] Category pre-selection from `?category=` on `/create` — Phase 1
 - [x] Monetization readiness audit — approved, no schema changes required before launch
 - [x] `BUSINESS_PRINCIPLES.md` + ADR-0001 (tenant isolation via nullable `organizationId`) — non-blocking documentation, per audit recommendation
+- [x] `suspendUser` self-suspend guard (+ fixed `AdminTabs.tsx`'s `handleSuspend` to actually check the result instead of always showing success)
 
 ## Current
 
-- **Task:** `suspendUser` self-suspend guard
+- **Task:** none in progress — awaiting next task selection
 - **Phase:** Phase 1 — Quick Wins
 
 ## Upcoming (Phase 1 — Quick Wins)
