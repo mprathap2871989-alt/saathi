@@ -1,8 +1,8 @@
 "use client";
 // src/app/create/page.tsx
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Shield, AlertCircle, CheckCircle } from "lucide-react";
 import { createPost } from "@/actions/posts";
@@ -18,10 +18,44 @@ interface FormErrors {
   story?:    string;
 }
 
-export default function CreatePage() {
-  const router = useRouter();
+// Reads ?category= from the URL, e.g. when arriving from /category/[slug]'s
+// "Share your story" link. Falls back to "" for anything unset or unknown
+// so a stale/hand-typed URL can't leave the form in an invalid selected state.
+function resolveInitialCategory(param: string | null): string {
+  return param && CATEGORIES.some((c) => c.id === param) ? param : "";
+}
 
-  const [category,  setCategory]  = useState("");
+// useSearchParams() requires a Suspense boundary to prerender correctly in
+// the App Router — CreatePage stays the stable default export, all existing
+// form logic moves unchanged into CreatePageForm.
+export default function CreatePage() {
+  return (
+    <Suspense fallback={<CreatePageFallback />}>
+      <CreatePageForm />
+    </Suspense>
+  );
+}
+
+function CreatePageFallback() {
+  return (
+    <>
+      <Navbar />
+      <main className="max-w-2xl mx-auto px-4 py-6">
+        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 sm:p-6 mt-5 animate-pulse">
+          <div className="h-6 w-40 bg-stone-100 rounded mb-3" />
+          <div className="h-4 w-64 bg-stone-100 rounded mb-6" />
+          <div className="h-24 bg-stone-100 rounded" />
+        </div>
+      </main>
+    </>
+  );
+}
+
+function CreatePageForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [category,  setCategory]  = useState(() => resolveInitialCategory(searchParams.get("category")));
   const [title,     setTitle]     = useState("");
   const [story,     setStory]     = useState("");
   const [errors,    setErrors]    = useState<FormErrors>({});

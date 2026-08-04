@@ -8,6 +8,7 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 ## Completed
 
 - [x] Real content blocklist (`obscenity`-based, replaces `["slur1","slur2"]` placeholder) — Phase 1
+- [x] Category pre-selection from `?category=` on `/create` — Phase 1
 
 ## Current
 
@@ -16,8 +17,7 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 
 ## Upcoming (Phase 1 — Quick Wins)
 
-- [ ] Fix pre-existing baseline type errors (11 implicit-`any`, 1 Clerk `middleware.ts` API mismatch) — newly discovered, recommended next
-- [ ] Category pre-selection from `?category=` on `/create`
+- [ ] `suspendUser` self-suspend guard
 - [ ] `suspendUser` self-suspend guard
 - [ ] Report rate limiting (reuse existing daily-count pattern)
 - [ ] Wire `resend` for admin report-alert emails
