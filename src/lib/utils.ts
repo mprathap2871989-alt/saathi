@@ -23,10 +23,5 @@ export function storyPreview(text: string, maxLen = 140): string {
   return text.slice(0, maxLen).trimEnd() + "…";
 }
 
-/** Basic profanity/slur filter — extend this list */
-const BLOCKED_WORDS = ["slur1", "slur2"]; // replace with real blocklist
-
-export function containsBlockedContent(text: string): boolean {
-  const lower = text.toLowerCase();
-  return BLOCKED_WORDS.some((w) => lower.includes(w));
-}
+// Content filtering moved to `./blocklist.ts` — see that file for details.
+export { containsBlockedContent } from "./blocklist";

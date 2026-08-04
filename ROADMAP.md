@@ -7,17 +7,16 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 
 ## Completed
 
-_(none yet — baseline import only)_
+- [x] Real content blocklist (`obscenity`-based, replaces `["slur1","slur2"]` placeholder) — Phase 1
 
 ## Current
 
-- **Task:** Replace placeholder content blocklist with a real, production filter
+- **Task:** none in progress — awaiting next task selection
 - **Phase:** Phase 1 — Quick Wins
-- **Status:** In progress
 
 ## Upcoming (Phase 1 — Quick Wins)
 
-- [ ] Real content blocklist (current task)
+- [ ] Fix pre-existing baseline type errors (11 implicit-`any`, 1 Clerk `middleware.ts` API mismatch) — newly discovered, recommended next
 - [ ] Category pre-selection from `?category=` on `/create`
 - [ ] `suspendUser` self-suspend guard
 - [ ] Report rate limiting (reuse existing daily-count pattern)
