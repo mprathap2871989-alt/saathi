@@ -6,6 +6,23 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "./user";
 
+// Daily report limit, mirroring the existing daily-count pattern used for
+// createPost (3/day, src/actions/posts.ts) and createComment (10/day,
+// src/actions/comments.ts). Matched to the comment limit as a reasonable,
+// already-established anchor in this codebase rather than a new guess.
+const DAILY_REPORT_LIMIT = 10;
+
+/** Shared by reportPost/reportComment — see DAILY_REPORT_LIMIT above. */
+async function hasReachedDailyReportLimit(userId: string): Promise<boolean> {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const todayCount = await prisma.report.count({
+    where: { reporterId: userId, createdAt: { gte: todayStart } },
+  });
+  return todayCount >= DAILY_REPORT_LIMIT;
+}
+
 /** Report a post */
 export async function reportPost(postId: string, reason: string) {
   const { userId: clerkId } = await auth();
@@ -18,6 +35,10 @@ export async function reportPost(postId: string, reason: string) {
     where: { postId, reporterId: user.id, resolved: false },
   });
   if (existing) return { success: true }; // silent dedupe
+
+  if (await hasReachedDailyReportLimit(user.id)) {
+    return { error: `You've reached the daily limit of ${DAILY_REPORT_LIMIT} reports. Please try again tomorrow.` };
+  }
 
   await prisma.report.create({
     data: { postId, reason, reporterId: user.id },
@@ -38,6 +59,10 @@ export async function reportComment(commentId: string, reason: string) {
     where: { commentId, reporterId: user.id, resolved: false },
   });
   if (existing) return { success: true };
+
+  if (await hasReachedDailyReportLimit(user.id)) {
+    return { error: `You've reached the daily limit of ${DAILY_REPORT_LIMIT} reports. Please try again tomorrow.` };
+  }
 
   await prisma.report.create({
     data: { commentId, reason, reporterId: user.id },
