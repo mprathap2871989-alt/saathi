@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateUser } from "./user";
+import { notifyAdminOfNewReport } from "@/lib/email";
 
 // Daily report limit, mirroring the existing daily-count pattern used for
 // createPost (3/day, src/actions/posts.ts) and createComment (10/day,
@@ -40,8 +41,18 @@ export async function reportPost(postId: string, reason: string) {
     return { error: `You've reached the daily limit of ${DAILY_REPORT_LIMIT} reports. Please try again tomorrow.` };
   }
 
-  await prisma.report.create({
+  const report = await prisma.report.create({
     data: { postId, reason, reporterId: user.id },
+  });
+
+  // Awaited deliberately: notifyAdminOfNewReport() never throws (see
+  // email.ts), so this can't fail the report. Left un-awaited, a serverless
+  // runtime could freeze/terminate the function before the send completes.
+  await notifyAdminOfNewReport({
+    reportType: "post",
+    contentId:  postId,
+    reason,
+    createdAt:  report.createdAt,
   });
 
   revalidatePath("/admin");
@@ -64,8 +75,18 @@ export async function reportComment(commentId: string, reason: string) {
     return { error: `You've reached the daily limit of ${DAILY_REPORT_LIMIT} reports. Please try again tomorrow.` };
   }
 
-  await prisma.report.create({
+  const report = await prisma.report.create({
     data: { commentId, reason, reporterId: user.id },
+  });
+
+  // Awaited deliberately: notifyAdminOfNewReport() never throws (see
+  // email.ts), so this can't fail the report. Left un-awaited, a serverless
+  // runtime could freeze/terminate the function before the send completes.
+  await notifyAdminOfNewReport({
+    reportType: "comment",
+    contentId:  commentId,
+    reason,
+    createdAt:  report.createdAt,
   });
 
   revalidatePath("/admin");

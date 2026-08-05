@@ -13,6 +13,7 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 - [x] `BUSINESS_PRINCIPLES.md` + ADR-0001 (tenant isolation via nullable `organizationId`) — non-blocking documentation, per audit recommendation
 - [x] `suspendUser` self-suspend guard (+ fixed `AdminTabs.tsx`'s `handleSuspend` to actually check the result instead of always showing success)
 - [x] Report rate limiting (10/day, mirrors `createPost`/`createComment`'s daily-count pattern)
+- [x] Admin report-alert emails via `resend` (`src/lib/email.ts`)
 
 ## Current
 
@@ -21,7 +22,6 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 
 ## Upcoming (Phase 1 — Quick Wins)
 
-- [ ] Wire `resend` for admin report-alert emails
 - [ ] Decide fate of unused `next-safe-action` dependency
 - [ ] "DEMO DATA" watermark on seeded content in non-production
 - [ ] Username-generator word list audit
