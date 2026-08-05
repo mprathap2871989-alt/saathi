@@ -15,6 +15,7 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 - [x] Report rate limiting (10/day, mirrors `createPost`/`createComment`'s daily-count pattern)
 - [x] Admin report-alert emails via `resend` (`src/lib/email.ts`)
 - [x] Comment helpful-vote persistence (`getPost()` now fetches per-comment vote state) + concurrent-vote race handling in `votes.ts`
+- [x] Category source-of-truth consolidation (`prisma/seed.ts` and `SETUP.md` now derive from `src/lib/categories.ts` instead of duplicating category data)
 
 ## Current
 

@@ -1,29 +1,29 @@
 // prisma/seed.ts
-// Run: npm run db:seed
+// Run: npm run db:seed             (full dev seed: categories + demo users/posts/comments/votes)
+// Run: npm run db:seed:categories  (production: categories only, no demo data)
 
 import { PrismaClient } from "@prisma/client";
+import { CATEGORIES } from "@/lib/categories";
 
 const prisma = new PrismaClient();
+const categoriesOnly = process.argv.includes("--categories-only");
 
 async function main() {
   console.log("🌱 Seeding Saathi database...");
 
   // ── Categories ──────────────────────────────
-  const categories = [
-    { id: "students",  label: "Students",         emoji: "📚", desc: "Exams, academic stress, college life",     order: 1  },
-    { id: "career",    label: "Career & Jobs",    emoji: "💼", desc: "Job loss, career confusion, workplace",    order: 2  },
-    { id: "relations", label: "Relationships",    emoji: "💛", desc: "Heartbreak, dating, boundaries",           order: 3  },
-    { id: "family",    label: "Family Issues",    emoji: "🏠", desc: "Conflicts, estrangement, dynamics",        order: 4  },
-    { id: "mens",      label: "Men's Support",    emoji: "🧭", desc: "Challenges men navigate alone",            order: 5  },
-    { id: "womens",    label: "Women's Support",  emoji: "🌸", desc: "Women supporting women",                   order: 6  },
-    { id: "lgbtq",     label: "LGBTQ+ Support",   emoji: "🌈", desc: "Identity, acceptance, safety",             order: 7  },
-    { id: "elderly",   label: "Elderly Support",  emoji: "🌻", desc: "Isolation, aging, wisdom",                 order: 8  },
-    { id: "grief",     label: "Grief & Loss",     emoji: "🕊️", desc: "Loss, bereavement, healing",               order: 9  },
-    { id: "financial", label: "Financial Stress", emoji: "🌱", desc: "Debt, hardship, recovery",                 order: 10 },
-    { id: "parenting", label: "Parenting",        emoji: "👶", desc: "Parenting challenges and joys",            order: 11 },
-    { id: "mental",    label: "Mental Wellness",  emoji: "🧘", desc: "Anxiety, depression, coping",              order: 12 },
-    { id: "other",     label: "Other",            emoji: "💬", desc: "Everything else",                          order: 13 },
-  ];
+  // Derived from src/lib/categories.ts (the single source of truth for
+  // category data) — not a second hand-typed copy. `color` is intentionally
+  // dropped here since it's a UI-only concern with no column in the
+  // Category table; `order` comes from array position, matching the
+  // existing display order exactly.
+  const categories = CATEGORIES.map((c, i) => ({
+    id:    c.id,
+    label: c.label,
+    emoji: c.emoji,
+    desc:  c.desc,
+    order: i + 1,
+  }));
 
   for (const cat of categories) {
     await prisma.category.upsert({
@@ -33,6 +33,11 @@ async function main() {
     });
   }
   console.log("✅ Categories seeded");
+
+  if (categoriesOnly) {
+    console.log("\n🎉 Categories-only seed complete (production mode — no demo data).");
+    return;
+  }
 
   // ── Seed Users ───────────────────────────────
   // In production these are created via Clerk webhook.

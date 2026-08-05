@@ -266,28 +266,17 @@ npx prisma db push
 ### 9b. Seed categories in production
 
 The full seed (with sample users/posts) is for development only.
-In production, only seed the categories:
+In production, only seed the categories — from your local machine, pointed
+at the production `DATABASE_URL`:
 
 ```bash
-# Run from Supabase → SQL Editor:
-INSERT INTO "Category" (id, label, emoji, "desc", "order") VALUES
-  ('students',  'Students',         '📚', 'Exams, academic stress, college life',  1),
-  ('career',    'Career & Jobs',    '💼', 'Job loss, career confusion, workplace', 2),
-  ('relations', 'Relationships',    '💛', 'Heartbreak, dating, boundaries',        3),
-  ('family',    'Family Issues',    '🏠', 'Conflicts, estrangement, dynamics',     4),
-  ('mens',      'Men''s Support',   '🧭', 'Challenges men navigate alone',         5),
-  ('womens',    'Women''s Support', '🌸', 'Women supporting women',               6),
-  ('lgbtq',     'LGBTQ+ Support',   '🌈', 'Identity, acceptance, safety',          7),
-  ('elderly',   'Elderly Support',  '🌻', 'Isolation, aging, wisdom',              8),
-  ('grief',     'Grief & Loss',     '🕊️', 'Loss, bereavement, healing',            9),
-  ('financial', 'Financial Stress', '🌱', 'Debt, hardship, recovery',             10),
-  ('parenting', 'Parenting',        '👶', 'Parenting challenges and joys',        11),
-  ('mental',    'Mental Wellness',  '🧘', 'Anxiety, depression, coping',          12),
-  ('other',     'Other',            '💬', 'Everything else',                      13)
-ON CONFLICT (id) DO NOTHING;
+npm run db:seed:categories
 ```
 
-Run this in: **Supabase Dashboard → SQL Editor → New query → Run**
+This runs the same categories-seeding logic as the full dev seed (derived
+from `src/lib/categories.ts`, the single source of truth for category data),
+just skipping the demo users/posts/comments step. Safe to re-run — uses
+`upsert`, so existing categories are left untouched.
 
 ### 9c. Set yourself as admin
 
