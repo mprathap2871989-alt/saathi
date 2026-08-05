@@ -17,19 +17,20 @@ const avatarColor = (name: string) =>
   AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
 
 export interface CommentItemProps {
-  id:           string;
-  postId:       string;
-  username:     string;
-  text:         string;
-  timeAgoStr:   string;
-  helpfulCount: number;
+  id:                 string;
+  postId:             string;
+  username:           string;
+  text:               string;
+  timeAgoStr:         string;
+  helpfulCount:       number;
+  initialUserHelpful: boolean;
 }
 
 export default function CommentItem({
-  id, postId, username, text, timeAgoStr, helpfulCount,
+  id, postId, username, text, timeAgoStr, helpfulCount, initialUserHelpful,
 }: CommentItemProps) {
   const [count,     setCount]     = useState(helpfulCount);
-  const [voted,     setVoted]     = useState(false);
+  const [voted,     setVoted]     = useState(initialUserHelpful);
   const [isPending, startTransition] = useTransition();
 
   const handleHelpful = () => {
@@ -42,6 +43,10 @@ export default function CommentItem({
         // revert on error
         setVoted(!next);
         setCount((c) => (next ? c - 1 : c + 1));
+      } else {
+        // sync to server's authoritative state, same pattern as HelpfulButton
+        setCount(res.helpful);
+        setVoted(res.userHelpful);
       }
     });
   };

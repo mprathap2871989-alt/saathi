@@ -14,6 +14,7 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 - [x] `suspendUser` self-suspend guard (+ fixed `AdminTabs.tsx`'s `handleSuspend` to actually check the result instead of always showing success)
 - [x] Report rate limiting (10/day, mirrors `createPost`/`createComment`'s daily-count pattern)
 - [x] Admin report-alert emails via `resend` (`src/lib/email.ts`)
+- [x] Comment helpful-vote persistence (`getPost()` now fetches per-comment vote state) + concurrent-vote race handling in `votes.ts`
 
 ## Current
 

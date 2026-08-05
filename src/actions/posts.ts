@@ -124,19 +124,41 @@ export async function getPost(id: string) {
 
   if (!post) return null;
 
-  // Check if current user has voted
+  type CommentWithMeta = (typeof post.comments)[number];
+
+  // Check current user's vote state — post-level (single lookup) and
+  // per-comment (one batched query for all comments on this post, not
+  // N+1). commentVotedIds tracks which comment IDs the user has already
+  // marked helpful, so each comment can report its own userHelpful flag.
   let userHelpfulPost = false;
+  let commentVotedIds = new Set<string>();
   if (clerkId) {
     const user = await prisma.user.findUnique({ where: { clerkId } });
     if (user) {
-      const vote = await prisma.helpfulVote.findUnique({
+      const postVote = await prisma.helpfulVote.findUnique({
         where: { userId_postId: { userId: user.id, postId: post.id } },
       });
-      userHelpfulPost = !!vote;
+      userHelpfulPost = !!postVote;
+
+      const commentIds = post.comments.map((c: CommentWithMeta) => c.id);
+      if (commentIds.length > 0) {
+        const commentVotes = await prisma.helpfulVote.findMany({
+          where: { userId: user.id, commentId: { in: commentIds } },
+          select: { commentId: true },
+        });
+        commentVotedIds = new Set(commentVotes.map((v: { commentId: string | null }) => v.commentId as string));
+      }
     }
   }
 
-  return { ...post, userHelpful: userHelpfulPost };
+  return {
+    ...post,
+    userHelpful: userHelpfulPost,
+    comments: post.comments.map((c: CommentWithMeta) => ({
+      ...c,
+      userHelpful: commentVotedIds.has(c.id),
+    })),
+  };
 }
 
 // ── Admin: Remove Post ────────────────────────

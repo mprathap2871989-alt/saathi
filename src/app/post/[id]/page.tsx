@@ -136,6 +136,7 @@ export default async function PostPage({ params }: PageProps) {
                 text={comment.text}
                 timeAgoStr={timeAgo(comment.createdAt)}
                 helpfulCount={comment._count.helpfulVotes}
+                initialUserHelpful={comment.userHelpful}
               />
             ))}
           </div>
