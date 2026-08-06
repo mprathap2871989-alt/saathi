@@ -16,11 +16,14 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 - [x] Admin report-alert emails via `resend` (`src/lib/email.ts`)
 - [x] Comment helpful-vote persistence (`getPost()` now fetches per-comment vote state) + concurrent-vote race handling in `votes.ts`
 - [x] Category source-of-truth consolidation (`prisma/seed.ts` and `SETUP.md` now derive from `src/lib/categories.ts` instead of duplicating category data)
+- [x] Phase 1 Release Readiness Audit (`PHASE1_RELEASE_AUDIT.md`) — identified C1 (middleware crash) and C2 (outdated Next.js/CVE exposure) as launch blockers
+- [x] Runtime verification of C1 — reproduced live against a dev server with an exact stack trace, before any fix was made
+- [x] **C1 fixed:** `src/middleware.ts` — `clerkMiddleware(async (auth, req) => { ... await auth.protect(); })`. Self-corrected during verification: an initial non-awaited fix removed the crash but silently let unauthenticated requests through; awaiting `auth.protect()` in an `async` callback fixed both. Re-verified live post-fix: zero `TypeError`s, zero unhandled rejections, unauthenticated access correctly blocked. See CHANGELOG.md for full detail.
 
 ## Current
 
 - **Task:** none in progress — awaiting next task selection
-- **Phase:** Phase 1 — Quick Wins
+- **Phase:** Phase 1 — Quick Wins (release-blocker remediation)
 
 ## Upcoming (Phase 1 — Quick Wins)
 
