@@ -19,6 +19,7 @@ Full rationale for every item lives in `SAATHI_V2_AUDIT.md`.
 - [x] Phase 1 Release Readiness Audit (`PHASE1_RELEASE_AUDIT.md`) — identified C1 (middleware crash) and C2 (outdated Next.js/CVE exposure) as launch blockers
 - [x] Runtime verification of C1 — reproduced live against a dev server with an exact stack trace, before any fix was made
 - [x] **C1 fixed:** `src/middleware.ts` — `clerkMiddleware(async (auth, req) => { ... await auth.protect(); })`. Self-corrected during verification: an initial non-awaited fix removed the crash but silently let unauthenticated requests through; awaiting `auth.protect()` in an `async` callback fixed both. Re-verified live post-fix: zero `TypeError`s, zero unhandled rejections, unauthenticated access correctly blocked. See CHANGELOG.md for full detail.
+- [x] **C2 fixed:** `next` upgraded `15.1.0` → `15.2.9`. Target revised twice during the task's own audit step (`15.2.3` → `15.2.6` → `15.2.9`) after discovering the named fix version had since been superseded by newer, more severe CVEs (up to and including a CVSS 10.0 RCE). Also resolves a pre-existing Clerk peer-dependency conflict as a side effect. Re-verified live: identical auth/route behavior to the post-C1-fix baseline, zero new TypeScript errors, zero new runtime errors. **Phase 1 release blockers are now fully resolved** — see PHASE1_RELEASE_AUDIT.md for the updated launch recommendation.
 
 ## Current
 

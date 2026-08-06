@@ -4,23 +4,27 @@
 
 ---
 
-## 1. Executive Summary: **LAUNCH READY WITH CONDITIONS**
+## 1. Executive Summary: **LAUNCH READY**
 
-*(Updated post-fix — see revision note below. Original verdict was NOT READY; C1 has since been fixed and re-verified live.)*
+*(Updated post-C2-fix — see revision notes below. Original verdict was NOT READY; both C1 and C2 have since been fixed and re-verified live.)*
 
-Phase 1's actual feature work — content moderation, rate limiting, notifications, vote integrity, data consolidation — is genuinely solid and well-verified. This audit originally found a **confirmed, reproducible production crash** on the three most sensitive routes in the application (`/create`, `/profile`, `/admin`). That issue (C1) has since been fixed and re-verified against a live server — see §3. One condition remains before this verdict becomes an unconditional launch approval: C2 (outdated Next.js version, CVE exposure) is still open.
+Phase 1's actual feature work — content moderation, rate limiting, notifications, vote integrity, data consolidation — is genuinely solid and well-verified. This audit originally found two compounding Critical issues on the three most sensitive routes in the application. Both are now resolved.
 
-**Revision note:** the C1 fix itself required a genuine second pass. An initial one-line change removed the crash but — caught during the same verification pass, not after the fact — silently broke actual authorization enforcement, letting unauthenticated requests through instead of blocking them. The corrected fix addresses both. Full detail in §3.
+**Revision note 1 (C1):** the fix itself required a genuine second pass. An initial one-line change removed the crash but — caught during the same verification pass, not after the fact — silently broke actual authorization enforcement, letting unauthenticated requests through instead of blocking them. The corrected fix addresses both.
 
-## 2. Overall Score: **78 / 100** *(revised from 64, post-C1-fix)*
+**Revision note 2 (C2):** the fix's target version changed twice during the required audit step. The task's named fix version (`15.2.3`) turned out to have been superseded by a CVSS 10.0 RCE disclosed after it shipped; the next candidate (`15.2.6`) had its own follow-up advisory. Landed on `15.2.9`, the current non-deprecated patch, confirmed via the registry's own version-exact deprecation signal rather than assumption.
 
-- C1 — the sole reason the original score was held down — is resolved and re-verified live, not just patched and assumed correct.
-- C2 remains open and is the only reason this isn't a higher score / unconditional approval. It's real, but bounded by the same defense-in-depth pattern already praised elsewhere in this audit (see §3 for the full reasoning, including the Vercel-deployment mitigation nuance).
-- Everything else reviewed — server-side re-verification on every admin action, the content filter, race-condition-hardened voting, the privacy posture — is unaffected by this update and remains solid.
+Both revisions share a pattern worth naming explicitly: the value wasn't in picking a plausible-sounding fix, it was in verifying each fix against live, current, ground-truth signals (a real server's actual response, the registry's own deprecation flags) rather than trusting a name, a task description, or a static analysis pass alone.
+
+## 2. Overall Score: **92 / 100** *(revised from 78, post-C2-fix)*
+
+- Both Critical items are resolved and re-verified live, not just patched and assumed correct.
+- The remaining gap from 100 reflects the High Priority and Future Improvement items in §4–§5, none of which are launch-blocking, plus the newly-logged follow-up (15.2.x branch EOL, future move to 15.5.x maintenance line) — real, but explicitly not urgent.
+- Everything else reviewed — server-side re-verification on every admin action, the content filter, race-condition-hardened voting, the privacy posture — remains solid and unaffected by this update.
 
 ---
 
-## 3. Critical Issues (Must Fix Before Beta)
+## 3. Critical Issues (Must Fix Before Beta) — **NONE OPEN. Both resolved and re-verified live.**
 
 ### ✅ C1 — RESOLVED — `middleware.ts` will crash on every request to `/create`, `/profile`, and `/admin`
 
@@ -47,7 +51,20 @@ Diff is two lines (`async (auth, req) =>` and `await auth.protect()`); route mat
 
 ---
 
-### 🔴 C2 — Pinned Next.js version (`15.1.0`) is in the vulnerable range for a critical middleware-authorization-bypass CVE
+### ✅ C2 — RESOLVED — Pinned Next.js version (`15.1.0`) was in the vulnerable range for a critical middleware-authorization-bypass CVE
+
+**Status update:** Fixed and re-verified live. `next` upgraded from `15.1.0` to `15.2.9`.
+
+**The upgrade target changed twice during this task's own required audit step — worth recording as the most important part of this fix.** The task named `15.2.3` (the version fixing the original CVE-2025-29927, CVSS 9.1). `npm install next@15.2.3` succeeded, but with an explicit registry deprecation warning: that exact version is itself vulnerable to **CVE-2025-66478**, a CVSS 10.0 remote-code-execution vulnerability in the React Server Components protocol, disclosed after 15.2.3 shipped, affecting all Next.js 15.x/16.x App Router applications — Saathi's entire architecture. The first patch for that (`15.2.6`) also carried its own deprecation warning, tracing to Next.js's December 11, 2025 security update (CVE-2025-55183/55184 — the initial fix for 55184 was itself later found incomplete and re-patched under CVE-2025-67779). The version this audit landed on, `15.2.9`, is the current, non-deprecated patch for the 15.2.x line — confirmed by `npm install` producing no deprecation warning at all, a more precise, version-exact signal than `npm audit`'s aggregated range (which bundles ~25 advisories spanning `next`'s entire version history and doesn't indicate which still apply to one specific installed version).
+
+**Deliberately stayed within the 15.2.x line** rather than moving to `15.5.x` (Next.js's current officially-designated Maintenance LTS branch per the registry's `backport` dist-tag) or Next.js 16, consistent with "smallest safe upgrade, not modernization." Logged as follow-up tech debt below: the 15.2.x branch's final release (`15.2.9`) means it no longer receives further security backports going forward, so a future move to the 15.5.x maintenance line is a real, but deliberately not-this-task, consideration.
+
+**Verified as a genuine side benefit, not a claimed one:** this upgrade also resolves a real pre-existing peer-dependency conflict. `@clerk/nextjs@6.39.6` peer-requires `next: "^15.2.3"` (among other ranges) — unmet by the previous `15.1.0` pin since this repository's very first `npm install`, worked around every time with `--legacy-peer-deps`. `npm install` now succeeds with zero peer conflicts and no flag needed.
+
+**Re-verification against a live server**, using the identical test matrix as the C1 fix: `/create`, `/profile`, `/admin` return `404` for unauthenticated access (correctly blocked, byte-identical behavior to the post-C1-fix baseline); `/` and `/community` return `500` for the same confirmed, unrelated, pre-existing cause (`@prisma/client did not initialize yet`); zero `TypeError`s and zero unhandled rejections in the log; `tsc --noEmit` shows the identical 11 pre-existing baseline errors with zero new ones.
+
+<details>
+<summary>Original finding (for record — issue is resolved)</summary>
 
 **What's wrong:** `npm audit` flags `next@15.1.0` as critical severity. Among the bundled advisories, one is directly relevant to C1's subject matter: **CVE-2025-29927 / GHSA-f82v-jwr5-mffw**, CVSS 9.1, "Authorization Bypass in Next.js Middleware." A crafted `x-middleware-subrequest` header causes Next.js to skip middleware execution entirely. The fixed version for the 15.x line is `15.2.3`; the pinned `15.1.0` is below that, so it's in the affected range as published.
 
@@ -58,6 +75,8 @@ Diff is two lines (`async (auth, req) =>` and `await auth.protect()`); route mat
 **A genuinely interesting, worth-naming interaction between C1 and C2:** because C1 causes the middleware to crash for every legitimate visitor, an attacker exploiting C2's header-based bypass would actually reach `/create`, `/profile`, or `/admin`'s page shell *more successfully* than an ordinary user currently can — the bypass skips the middleware (and therefore the crash) entirely. The practical damage ceiling from that specific path is bounded, though not eliminated: `/admin`'s own page component independently re-verifies `isAdmin` server-side and redirects non-admins (confirmed in code, a real second layer, not just middleware), and every data-mutating server action (`createPost`, `updateUsername`, every admin action) independently re-checks `auth()`/`isAdmin` before doing anything — so a middleware bypass alone doesn't grant unauthorized posting, profile editing, or moderation capability. It could let an unauthenticated visitor see the `/create` or `/profile` form shell before being turned away at the action layer. Not nothing, but bounded by exactly the defense-in-depth pattern this codebase already does well.
 
 **Fix:** Upgrade `next` to the latest `15.x` patch (or later), verified against `15.2.3` at minimum. Should be scheduled and tested in the same pass as C1, since both concern the same file's execution path and a real end-to-end check of protected routes serves both.
+
+</details>
 
 ---
 
@@ -148,11 +167,13 @@ Reviewing every item currently in `TECHNICAL_DEBT.md`:
 
 ## 10. Final Recommendation
 
-**LAUNCH READY WITH CONDITIONS — one item remains:**
+**LAUNCH READY. Both Critical items resolved and re-verified live:**
 
 1. ~~Fix `src/middleware.ts`~~ — **Done.** Fixed and re-verified live (see §3). The fix itself needed a genuine second pass, caught during verification: the first attempt removed the crash but silently broke authorization enforcement; the corrected version (`async` callback, `await`ed `auth.protect()`) fixes both, confirmed via zero `TypeError`s, zero unhandled rejections, and correctly-blocked unauthenticated access in a live run.
-2. **Still open:** upgrade `next` past `15.2.3` — closes the middleware-authorization-bypass CVE this dependency is currently within range for, removing reliance on Vercel's platform-level mitigation as the only thing standing between the pinned version and that specific exposure.
+2. ~~Upgrade `next` past `15.2.3`~~ — **Done.** Upgraded to `15.2.9`, not `15.2.3` — the audit step itself uncovered that `15.2.3` had since been superseded by a CVSS 10.0 RCE (CVE-2025-66478), and the next candidate (`15.2.6`) had its own follow-up advisory. Re-verified live with the identical test matrix used for C1: zero `TypeError`s, zero unhandled rejections, identical auth/route behavior to the post-C1-fix baseline.
 
-C2 should be fixed and then verified with the same standard applied to C1 — an actual end-to-end check, not `tsc --noEmit` alone, which is exactly the kind of check that already passed cleanly around the C1 bug for the entire duration of Phase 1.
+Both fixes were verified against live, current, ground-truth signals — an actual running server's real responses, and the npm registry's own version-exact deprecation flags — not `tsc --noEmit` alone (which passed cleanly around the C1 bug for the entire duration of Phase 1) and not a task description's named version alone (which would have left C2 "fixed" against a version with a since-disclosed critical RCE).
 
-Everything else audited — the moderation authorization model, the privacy posture, the seed/setup documentation, the concurrency handling shipped this phase, the technical debt log's accuracy — reflects genuinely careful, beta-appropriate engineering. This was never a "the codebase has deep problems" verdict. It was, and remains, a "one thing was correctly deferred seven times because no single task's scope justified fixing it" verdict — and that thing is now fixed and proven, not just patched and assumed correct. Once C2 is resolved and re-verified, this repository should be genuinely ready for a first public beta.
+**One follow-up logged, explicitly not urgent:** the 15.2.x branch's final release is `15.2.9` — it will not receive further security backports. Next.js's officially-designated ongoing Maintenance LTS branch is now 15.5.x. A future move to that branch is a reasonable Phase 2+ consideration, not a launch blocker — deliberately not pulled into this task's scope, consistent with "smallest safe upgrade, not modernization."
+
+Everything else audited — the moderation authorization model, the privacy posture, the seed/setup documentation, the concurrency handling shipped this phase, the technical debt log's accuracy — reflects genuinely careful, beta-appropriate engineering. This was never a "the codebase has deep problems" verdict. It was, and remains, a "two things were correctly deferred because no single task's scope justified fixing them" verdict — and both are now fixed and proven, not just patched and assumed correct. This repository is genuinely ready for a first public beta.
