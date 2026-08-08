@@ -35,7 +35,7 @@ export default async function ProfilePage() {
 
   if (!profile) redirect("/sign-in");
 
-  const activePosts = profile.posts.filter((p) => !p.isRemoved);
+  const activePosts = profile.posts.filter((p: (typeof profile.posts)[number]) => !p.isRemoved);
 
   return (
     <>
@@ -111,7 +111,7 @@ export default async function ProfilePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {activePosts.map((p) => (
+            {activePosts.map((p: (typeof activePosts)[number]) => (
               <PostCard
                 key={p.id}
                 id={p.id}

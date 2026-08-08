@@ -33,7 +33,7 @@ export default async function AdminPage() {
   ]);
 
   // ── Serialise for client component ──────────
-  const reports: AdminReport[] = rawReports.map((r) => ({
+  const reports: AdminReport[] = rawReports.map((r: (typeof rawReports)[number]) => ({
     id:        r.id,
     reason:    r.reason,
     createdAt: timeAgo(r.createdAt),
@@ -44,7 +44,7 @@ export default async function AdminPage() {
       : null,
   }));
 
-  const posts: AdminPost[] = rawPosts.map((p) => ({
+  const posts: AdminPost[] = rawPosts.map((p: (typeof rawPosts)[number]) => ({
     id:           p.id,
     title:        p.title,
     username:     p.user.username,
@@ -54,7 +54,7 @@ export default async function AdminPage() {
     commentCount: p._count.comments,
   }));
 
-  const users: AdminUser[] = rawUsers.map((u) => ({
+  const users: AdminUser[] = rawUsers.map((u: (typeof rawUsers)[number]) => ({
     id:          u.id,
     username:    u.username,
     createdAt:   timeAgo(u.createdAt),

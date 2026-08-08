@@ -17,10 +17,11 @@ import { prisma } from "@/lib/prisma";
 import { timeAgo, storyPreview } from "@/lib/utils";
 import { getCategoryColors } from "@/lib/categories";
 
-interface PageProps { params: { id: string } }
+interface PageProps { params: Promise<{ id: string }> }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
   if (!post) return { title: "Post not found — Saathi" };
   return {
     title: `${post.title} — Saathi`,
@@ -34,7 +35,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PostPage({ params }: PageProps) {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
   if (!post) notFound();
 
   // Resolve current user's username for the CommentForm
@@ -91,7 +93,7 @@ export default async function PostPage({ params }: PageProps) {
 
           {/* Story body */}
           <div className="space-y-4 text-[15px] text-gray-700 leading-relaxed">
-            {paragraphs.map((para, i) => <p key={i}>{para}</p>)}
+            {paragraphs.map((para: string, i: number) => <p key={i}>{para}</p>)}
           </div>
 
           {/* Actions */}
@@ -127,7 +129,7 @@ export default async function PostPage({ params }: PageProps) {
               </div>
             )}
 
-            {post.comments.map((comment) => (
+            {post.comments.map((comment: (typeof post.comments)[number]) => (
               <CommentItem
                 key={comment.id}
                 id={comment.id}

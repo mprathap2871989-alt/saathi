@@ -8,10 +8,11 @@ import { PostCard, CrisisBanner } from "@/components/PostCard";
 import { getPosts } from "@/actions/posts";
 import { getCategoryById, getCategoryColors, CATEGORIES } from "@/lib/categories";
 
-interface PageProps { params: { slug: string } }
+interface PageProps { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const cat = getCategoryById(params.slug);
+  const { slug } = await params;
+  const cat = getCategoryById(slug);
   return {
     title: `${cat.label} — Saathi Community`,
     description: `Stories, support, and shared experiences in ${cat.label}. ${cat.desc}`,
@@ -26,13 +27,14 @@ export function generateStaticParams() {
 export const revalidate = 120; // ISR: 2 minutes
 
 export default async function CategoryPage({ params }: PageProps) {
-  const cat = getCategoryById(params.slug);
+  const { slug } = await params;
+  const cat = getCategoryById(slug);
 
   // If slug doesn't match any known category ID, 404
-  if (!CATEGORIES.find((c) => c.id === params.slug)) notFound();
+  if (!CATEGORIES.find((c) => c.id === slug)) notFound();
 
-  const posts = await getPosts({ categoryId: params.slug, limit: 30 });
-  const cl    = getCategoryColors(params.slug);
+  const posts = await getPosts({ categoryId: slug, limit: 30 });
+  const cl    = getCategoryColors(slug);
 
   return (
     <>
@@ -58,7 +60,7 @@ export default async function CategoryPage({ params }: PageProps) {
               </p>
             </div>
             <Link
-              href={`/create?category=${params.slug}`}
+              href={`/create?category=${slug}`}
               className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-emerald-700 text-white text-xs font-medium rounded-full hover:bg-emerald-800 transition-colors"
             >
               <Plus size={13} /> Share
@@ -78,14 +80,14 @@ export default async function CategoryPage({ params }: PageProps) {
                 Be the first to share in this space.
               </p>
               <Link
-                href={`/create?category=${params.slug}`}
+                href={`/create?category=${slug}`}
                 className="inline-block px-5 py-2.5 bg-emerald-700 text-white text-sm font-semibold rounded-full hover:bg-emerald-800 transition-colors"
               >
                 Share Your Story
               </Link>
             </div>
           ) : (
-            posts.map((p) => (
+            posts.map((p: (typeof posts)[number]) => (
               <PostCard
                 key={p.id}
                 id={p.id}
@@ -105,7 +107,7 @@ export default async function CategoryPage({ params }: PageProps) {
         <div className="mt-10 pt-6 border-t border-stone-200">
           <p className="text-sm font-semibold text-gray-700 mb-3">Browse other topics</p>
           <div className="flex flex-wrap gap-2">
-            {CATEGORIES.filter((c) => c.id !== params.slug).map((c) => (
+            {CATEGORIES.filter((c) => c.id !== slug).map((c) => (
               <Link
                 key={c.id}
                 href={`/category/${c.id}`}

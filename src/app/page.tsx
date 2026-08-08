@@ -22,7 +22,7 @@ async function RecentStories() {
   if (!posts.length) return null;
   return (
     <div className="space-y-3">
-      {posts.map((p) => (
+      {posts.map((p: (typeof posts)[number]) => (
         <PostCard
           key={p.id}
           id={p.id}

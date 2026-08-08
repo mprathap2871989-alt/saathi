@@ -17,16 +17,18 @@ export const metadata: Metadata = {
 
 const POSTS_PER_PAGE = 15;
 
-interface PageProps {
-  searchParams: {
-    search?:   string;
-    category?: string;
-    sort?:     string;
-    page?:     string;
-  };
+interface RawSearchParams {
+  search?:   string;
+  category?: string;
+  sort?:     string;
+  page?:     string;
 }
 
-async function PostsList({ searchParams }: PageProps) {
+interface PageProps {
+  searchParams: Promise<RawSearchParams>;
+}
+
+async function PostsList({ searchParams }: { searchParams: RawSearchParams }) {
   const { search, category, sort, page } = searchParams;
   const currentPage = Math.max(1, Number(page) || 1);
 
@@ -61,7 +63,7 @@ async function PostsList({ searchParams }: PageProps) {
   return (
     <>
       <div className="space-y-3">
-        {posts.map((p) => (
+        {posts.map((p: (typeof posts)[number]) => (
           <PostCard
             key={p.id}
             id={p.id}
@@ -86,8 +88,9 @@ async function PostsList({ searchParams }: PageProps) {
   );
 }
 
-export default function CommunityPage({ searchParams }: PageProps) {
-  const { category } = searchParams;
+export default async function CommunityPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const { category } = resolvedSearchParams;
   const activeCat = category ? getCategoryById(category) : null;
 
   return (
@@ -118,9 +121,9 @@ export default function CommunityPage({ searchParams }: PageProps) {
         <div className="mt-5">
           <Suspense fallback={<div className="h-28 bg-stone-100 rounded-xl animate-pulse" />}>
             <FeedFilters
-              currentSearch={searchParams.search}
-              currentCategory={searchParams.category}
-              currentSort={searchParams.sort}
+              currentSearch={resolvedSearchParams.search}
+              currentCategory={resolvedSearchParams.category}
+              currentSort={resolvedSearchParams.sort}
             />
           </Suspense>
         </div>
@@ -128,7 +131,7 @@ export default function CommunityPage({ searchParams }: PageProps) {
         {/* Posts list (server rendered, re-fetched on URL change) */}
         <div className="mt-5">
           <Suspense fallback={<FeedSkeleton />}>
-            <PostsList searchParams={searchParams} />
+            <PostsList searchParams={resolvedSearchParams} />
           </Suspense>
         </div>
       </main>
