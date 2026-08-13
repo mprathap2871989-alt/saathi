@@ -2,7 +2,14 @@
 // src/components/admin/AdminTabs.tsx
 
 import { useState, useTransition } from "react";
-import { Trash2, UserX, Eye, CheckCircle, AlertTriangle, Clock } from "lucide-react";
+import {
+  Trash2,
+  UserX,
+  Eye,
+  CheckCircle,
+  AlertTriangle,
+  Clock,
+} from "lucide-react";
 import { removePost } from "@/actions/posts";
 import { removeComment } from "@/actions/comments";
 import { resolveReport } from "@/actions/reports";
@@ -11,67 +18,110 @@ import { getCategoryById } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-// ── Serialisable types (no Date objects) ─────
+// ── Serialisable types (no Date objects) ─────────────────────
 export interface AdminReport {
-  id:        string;
-  reason:    string;
+  id: string;
+  reason: string;
   createdAt: string;
-  reporter:  { username: string };
-  post:      { id: string; title: string } | null;
-  comment:   { id: string; text: string; postId: string } | null;
+  reporter: { username: string };
+  post: { id: string; title: string } | null;
+  comment: { id: string; text: string; postId: string } | null;
 }
 
 export interface AdminPost {
-  id:           string;
-  title:        string;
-  username:     string;
-  categoryId:   string;
-  createdAt:    string;
+  id: string;
+  title: string;
+  username: string;
+  categoryId: string;
+  createdAt: string;
   helpfulCount: number;
   commentCount: number;
 }
 
 export interface AdminUser {
-  id:          string;
-  username:    string;
-  createdAt:   string;
+  id: string;
+  username: string;
+  createdAt: string;
   isSuspended: boolean;
-  postCount:   number;
+  postCount: number;
 }
 
 interface Props {
   reports: AdminReport[];
-  posts:   AdminPost[];
-  users:   AdminUser[];
+  posts: AdminPost[];
+  users: AdminUser[];
 }
 
 type Tab = "reports" | "posts" | "users";
 
-export default function AdminTabs({ reports: initReports, posts: initPosts, users: initUsers }: Props) {
-  const [tab,      setTab]      = useState<Tab>("reports");
-  const [reports,  setReports]  = useState(initReports);
-  const [posts,    setPosts]    = useState(initPosts);
-  const [users,    setUsers]    = useState(initUsers);
-  const [toast,    setToast]    = useState<{ message: string; type: "success" | "error" } | null>(null);
+export default function AdminTabs({
+  reports: initReports,
+  posts: initPosts,
+  users: initUsers,
+}: Props) {
+  const [tab, setTab] = useState<Tab>("reports");
+  const [reports, setReports] = useState(initReports);
+  const [posts, setPosts] = useState(initPosts);
+  const [users, setUsers] = useState(initUsers);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
   const [isPending, startTransition] = useTransition();
 
-  const showToast = (message: string, type: "success" | "error" = "success") => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success"
+  ) => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
   const handleRemovePost = (postId: string, reportId?: string) => {
     startTransition(async () => {
-      await removePost(postId);
+      const removeResult = await removePost(postId);
+
+      if (removeResult?.error) {
+        showToast(removeResult.error, "error");
+        return;
+      }
+
+      if (reportId) {
+        const resolveResult = await resolveReport(reportId);
+
+        if (resolveResult?.error) {
+          showToast(resolveResult.error, "error");
+          return;
+        }
+
+        setReports((r) => r.filter((x) => x.id !== reportId));
+      }
+
       setPosts((p) => p.filter((x) => x.id !== postId));
-      if (reportId) setReports((r) => r.filter((x) => x.id !== reportId));
       showToast("Post removed.");
     });
   };
 
-  const handleRemoveComment = (commentId: string, reportId: string) => {
+  const handleRemoveComment = (
+    commentId: string,
+    reportId: string
+  ) => {
     startTransition(async () => {
-      await removeComment(commentId);
+      const removeResult = await removeComment(commentId);
+
+      if (removeResult?.error) {
+        showToast(removeResult.error, "error");
+        return;
+      }
+
+      const resolveResult = await resolveReport(reportId);
+
+      if (resolveResult?.error) {
+        showToast(resolveResult.error, "error");
+        return;
+      }
+
       setReports((r) => r.filter((x) => x.id !== reportId));
       showToast("Comment removed.");
     });
@@ -79,29 +129,44 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
 
   const handleDismiss = (reportId: string) => {
     startTransition(async () => {
-      await resolveReport(reportId);
+      const result = await resolveReport(reportId);
+
+      if (result?.error) {
+        showToast(result.error, "error");
+        return;
+      }
+
       setReports((r) => r.filter((x) => x.id !== reportId));
       showToast("Report dismissed.");
     });
   };
 
   const handleSuspend = (userId: string) => {
-    if (!confirm("Suspend this user? They will no longer be able to post.")) return;
+    if (!confirm("Suspend this user? They will no longer be able to post."))
+      return;
+
     startTransition(async () => {
       const result = await suspendUser(userId);
+
       if (result?.error) {
         showToast(result.error, "error");
         return;
       }
-      setUsers((u) => u.map((x) => x.id === userId ? { ...x, isSuspended: true } : x));
+
+      setUsers((u) =>
+        u.map((x) =>
+          x.id === userId ? { ...x, isSuspended: true } : x
+        )
+      );
+
       showToast("User suspended.");
     });
   };
 
   const tabs: { id: Tab; label: string; count?: number }[] = [
-    { id: "reports", label: "Reports",   count: reports.length },
-    { id: "posts",   label: "All Posts", count: posts.length   },
-    { id: "users",   label: "Users",     count: users.length   },
+    { id: "reports", label: "Reports", count: reports.length },
+    { id: "posts", label: "All Posts", count: posts.length },
+    { id: "users", label: "Users", count: users.length },
   ];
 
   return (
@@ -120,15 +185,18 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
             )}
           >
             {t.label}
+
             {t.count !== undefined && t.count > 0 && (
-              <span className={cn(
-                "text-xs px-1.5 py-0.5 rounded-full font-bold",
-                tab === t.id
-                  ? "bg-white/20 text-white"
-                  : t.id === "reports"
-                    ? "bg-red-100 text-red-600"
-                    : "bg-stone-100 text-gray-500"
-              )}>
+              <span
+                className={cn(
+                  "text-xs px-1.5 py-0.5 rounded-full font-bold",
+                  tab === t.id
+                    ? "bg-white/20 text-white"
+                    : t.id === "reports"
+                      ? "bg-red-100 text-red-600"
+                      : "bg-stone-100 text-gray-500"
+                )}
+              >
                 {t.count}
               </span>
             )}
@@ -141,33 +209,59 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
         <div className="space-y-3">
           {reports.length === 0 ? (
             <div className="text-center py-14 bg-white rounded-xl border border-stone-200">
-              <CheckCircle size={28} className="mx-auto text-emerald-500 mb-2" />
-              <p className="font-semibold text-gray-700">No pending reports</p>
-              <p className="text-sm text-gray-400 mt-1">Community looks healthy!</p>
+              <CheckCircle
+                size={28}
+                className="mx-auto text-emerald-500 mb-2"
+              />
+
+              <p className="font-semibold text-gray-700">
+                No pending reports
+              </p>
+
+              <p className="text-sm text-gray-400 mt-1">
+                Community looks healthy!
+              </p>
             </div>
           ) : (
             reports.map((r) => (
-              <div key={r.id} className="bg-white rounded-xl border border-red-200 p-4">
+              <div
+                key={r.id}
+                className="bg-white rounded-xl border border-red-200 p-4"
+              >
                 <div className="flex items-start gap-3 mb-3">
-                  <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle
+                    size={16}
+                    className="text-red-500 flex-shrink-0 mt-0.5"
+                  />
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-bold text-red-600 uppercase tracking-wide">
                         {r.post ? "Post" : "Comment"} Report
                       </span>
+
                       <span className="text-xs text-gray-400 flex items-center gap-0.5">
                         <Clock size={10} /> {r.createdAt}
                       </span>
                     </div>
-                    <p className="text-sm font-medium text-gray-800 mb-0.5">"{r.reason}"</p>
+
+                    <p className="text-sm font-medium text-gray-800 mb-0.5">
+                      "{r.reason}"
+                    </p>
+
                     <p className="text-xs text-gray-400">
                       Reported by {r.reporter.username}
                     </p>
+
                     {r.post && (
                       <p className="text-xs text-gray-600 mt-1.5 line-clamp-1">
-                        Post: <span className="font-medium">{r.post.title}</span>
+                        Post:{" "}
+                        <span className="font-medium">
+                          {r.post.title}
+                        </span>
                       </p>
                     )}
+
                     {r.comment && (
                       <p className="text-xs text-gray-600 mt-1.5 line-clamp-2 bg-stone-50 rounded-lg px-2 py-1">
                         "{r.comment.text}"
@@ -180,11 +274,14 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
                   {r.post && (
                     <>
                       <button
-                        onClick={() => handleRemovePost(r.post!.id, r.id)}
+                        onClick={() =>
+                          handleRemovePost(r.post!.id, r.id)
+                        }
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600 transition-colors"
                       >
                         <Trash2 size={12} /> Remove Post
                       </button>
+
                       <Link
                         href={`/post/${r.post.id}`}
                         target="_blank"
@@ -194,14 +291,18 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
                       </Link>
                     </>
                   )}
+
                   {r.comment && (
                     <>
                       <button
-                        onClick={() => handleRemoveComment(r.comment!.id, r.id)}
+                        onClick={() =>
+                          handleRemoveComment(r.comment!.id, r.id)
+                        }
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600 transition-colors"
                       >
                         <Trash2 size={12} /> Remove Comment
                       </button>
+
                       <Link
                         href={`/post/${r.comment.postId}`}
                         target="_blank"
@@ -211,6 +312,7 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
                       </Link>
                     </>
                   )}
+
                   <button
                     onClick={() => handleDismiss(r.id)}
                     className="px-3 py-1.5 bg-stone-100 text-gray-600 text-xs font-medium rounded-lg hover:bg-stone-200 transition-colors ml-auto"
@@ -229,18 +331,32 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
         <div className="space-y-2">
           {posts.map((p) => {
             const cat = getCategoryById(p.categoryId);
+
             return (
-              <div key={p.id} className="bg-white rounded-xl border border-stone-200 p-3 flex items-start gap-3">
+              <div
+                key={p.id}
+                className="bg-white rounded-xl border border-stone-200 p-3 flex items-start gap-3"
+              >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 line-clamp-1">{p.title}</p>
+                  <p className="text-sm font-medium text-gray-800 line-clamp-1">
+                    {p.title}
+                  </p>
+
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="text-xs text-gray-500">{p.username}</span>
+                    <span className="text-xs text-gray-500">
+                      {p.username}
+                    </span>
+
                     <span className="text-xs bg-stone-100 text-gray-600 px-1.5 py-0.5 rounded-full">
                       {cat.emoji} {cat.label}
                     </span>
-                    <span className="text-xs text-gray-400">{p.createdAt}</span>
+
+                    <span className="text-xs text-gray-400">
+                      {p.createdAt}
+                    </span>
                   </div>
                 </div>
+
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <Link
                     href={`/post/${p.id}`}
@@ -249,6 +365,7 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
                   >
                     <Eye size={14} />
                   </Link>
+
                   <button
                     onClick={() => handleRemovePost(p.id)}
                     className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -259,8 +376,11 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
               </div>
             );
           })}
+
           {posts.length === 0 && (
-            <div className="text-center py-10 text-gray-400 text-sm">No posts found.</div>
+            <div className="text-center py-10 text-gray-400 text-sm">
+              No posts found.
+            </div>
           )}
         </div>
       )}
@@ -269,23 +389,40 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
       {tab === "users" && (
         <div className="space-y-2">
           {users.map((u) => (
-            <div key={u.id} className={cn(
-              "bg-white rounded-xl border p-3 flex items-center gap-3",
-              u.isSuspended ? "border-red-200 bg-red-50/30" : "border-stone-200"
-            )}>
+            <div
+              key={u.id}
+              className={cn(
+                "bg-white rounded-xl border p-3 flex items-center gap-3",
+                u.isSuspended
+                  ? "border-red-200 bg-red-50/30"
+                  : "border-stone-200"
+              )}
+            >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
                 style={{ backgroundColor: "#2d7a52" }}
               >
                 {u.username[0].toUpperCase()}
               </div>
+
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800">{u.username}</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {u.username}
+                </p>
+
                 <p className="text-xs text-gray-400">
-                  {u.postCount} {u.postCount === 1 ? "post" : "posts"} · joined {u.createdAt}
-                  {u.isSuspended && <span className="ml-2 text-red-500 font-medium">· SUSPENDED</span>}
+                  {u.postCount}{" "}
+                  {u.postCount === 1 ? "post" : "posts"} · joined{" "}
+                  {u.createdAt}
+
+                  {u.isSuspended && (
+                    <span className="ml-2 text-red-500 font-medium">
+                      · SUSPENDED
+                    </span>
+                  )}
                 </p>
               </div>
+
               {!u.isSuspended && (
                 <button
                   onClick={() => handleSuspend(u.id)}
@@ -304,10 +441,18 @@ export default function AdminTabs({ reports: initReports, posts: initPosts, user
         <div
           className={cn(
             "fixed bottom-6 left-1/2 -translate-x-1/2 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50",
-            toast.type === "error" ? "bg-red-700" : "bg-emerald-800"
+            toast.type === "error"
+              ? "bg-red-700"
+              : "bg-emerald-800"
           )}
         >
-          {toast.type === "error" ? <AlertTriangle size={15} /> : <CheckCircle size={15} />} {toast.message}
+          {toast.type === "error" ? (
+            <AlertTriangle size={15} />
+          ) : (
+            <CheckCircle size={15} />
+          )}
+
+          {toast.message}
         </div>
       )}
     </div>
