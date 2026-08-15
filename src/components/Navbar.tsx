@@ -37,6 +37,9 @@ export default function Navbar() {
             <>
               {isSignedIn ? (
                 <>
+                  {/* Private Help */}
+                  <NavLink href="/help">Need Help?</NavLink>
+
                   <NavLink href="/profile">Profile</NavLink>
 
                   <Link
@@ -83,6 +86,14 @@ export default function Navbar() {
             <>
               {isSignedIn ? (
                 <>
+                  {/* Private Help */}
+                  <Link
+                    href="/help"
+                    className="px-3 py-1.5 border border-stone-200 text-stone-700 text-sm font-medium rounded-full hover:bg-stone-50 hover:text-emerald-700 transition-colors"
+                  >
+                    Help
+                  </Link>
+
                   <Link
                     href="/create"
                     className="p-2 bg-emerald-700 text-white rounded-full hover:bg-emerald-800 transition-colors"
