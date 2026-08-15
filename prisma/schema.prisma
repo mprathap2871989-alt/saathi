@@ -9,21 +9,33 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  // DATABASE_URL  → Supabase Transaction pooler (port 6543) — used by the app at runtime
-  // DIRECT_URL    → Supabase direct connection  (port 5432) — used by Prisma CLI for migrations
+  // DATABASE_URL → Supabase Transaction pooler (port 6543) — used by the app at runtime
+  // DIRECT_URL   → Supabase direct connection (port 5432) — used by Prisma CLI for migrations
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// HELP REQUEST STATUS
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum HelpRequestStatus {
+  NEW
+  IN_REVIEW
+  RESPONDED
+  CLOSED
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // USER
 // Created automatically after Clerk sign-up
 // via webhook or on first authenticated request
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
 model User {
   id          String   @id @default(cuid())
   clerkId     String   @unique
-  username    String   @unique   // e.g. "BraveSoul123" — auto-generated
+  username    String   @unique
   isAdmin     Boolean  @default(false)
   isSuspended Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -33,16 +45,18 @@ model User {
   comments     Comment[]
   helpfulVotes HelpfulVote[]
   reports      Report[]
+  helpRequests HelpRequest[]
 
   @@index([clerkId])
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // CATEGORY
 // Seeded once. Not user-created.
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
 model Category {
-  id    String @id  // e.g. "students", "career"
+  id    String @id
   label String
   emoji String
   desc  String
@@ -51,9 +65,10 @@ model Category {
   posts Post[]
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // POST
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
 model Post {
   id         String   @id @default(cuid())
   title      String   @db.VarChar(200)
@@ -71,15 +86,17 @@ model Post {
   comments     Comment[]
   helpfulVotes HelpfulVote[]
   reports      Report[]
+  helpRequests HelpRequest[]
 
   @@index([categoryId])
   @@index([createdAt])
   @@index([userId])
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // COMMENT
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
 model Comment {
   id        String   @id @default(cuid())
   text      String   @db.Text
@@ -99,10 +116,11 @@ model Comment {
   @@index([userId])
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // HELPFUL VOTE
 // One per user per post/comment.
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
 model HelpfulVote {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -122,10 +140,11 @@ model HelpfulVote {
   @@index([commentId])
 }
 
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // REPORT
 // Can target a post or a comment, not both.
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+
 model Report {
   id        String   @id @default(cuid())
   reason    String
@@ -141,5 +160,30 @@ model Report {
   comment  Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@index([resolved])
+  @@index([createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HELP REQUEST
+// Private support request between a Saathi user and the admin.
+// ─────────────────────────────────────────────────────────────────────────────
+
+model HelpRequest {
+  id            String            @id @default(cuid())
+  message       String            @db.Text
+  status        HelpRequestStatus @default(NEW)
+  adminResponse String?           @db.Text
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  userId String
+  postId String?
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post? @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([postId])
+  @@index([status])
   @@index([createdAt])
 }
