@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { containsBlockedContent } from "@/lib/utils";
-import { getOrCreateUser } from "./user";
+import { getActiveUser } from "./user";
 
 // ── Validation ──────────────────────────────────────────────────────────────
 const CreatePostSchema = z.object({
@@ -21,7 +21,7 @@ const CreatePostSchema = z.object({
   categoryId: z.string().min(1, "Please choose a category"),
 });
 
-// ── Create Post ──────────────────────────────────────────────────────────────
+// ── Create Post ─────────────────────────────────────────────────────────────
 export async function createPost(formData: {
   title: string;
   story: string;
@@ -49,9 +49,14 @@ export async function createPost(formData: {
     };
   }
 
-  // Rate limit: max 3 posts per day per user
-  const user = await getOrCreateUser(clerkId);
+  // Active account check
+  const { user, error } = await getActiveUser(clerkId);
 
+  if (!user) {
+    return { error };
+  }
+
+  // Rate limit: max 3 posts per day per user
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 

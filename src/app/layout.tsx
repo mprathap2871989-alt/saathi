@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: "Saathi — You don't have to figure everything out alone",
   description:
     "A safe, anonymous support community. Share your story, find people who understand, and give and receive support — completely free.",
-  keywords: ["support", "mental health", "community", "anonymous", "India"],
+  keywords: ["support", "community", "anonymous", "India"],
   openGraph: {
     title: "Saathi — You don't have to figure everything out alone",
     description: "Share your story. Find support. Feel less alone.",
@@ -35,7 +35,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInForceRedirectUrl="/community"
+      signUpForceRedirectUrl="/community"
+      signInFallbackRedirectUrl="/community"
+      signUpFallbackRedirectUrl="/community"
+    >
       <html lang="en" className={`${inter.variable} ${lora.variable}`}>
         <body className="bg-stone-50 text-gray-900 antialiased font-sans">
           {children}

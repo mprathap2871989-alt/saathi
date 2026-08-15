@@ -1,15 +1,19 @@
+"use client";
+
 // src/components/Navbar.tsx
 
 import Link from "next/link";
 import {
   SignInButton,
   SignUpButton,
-  Show,
   UserButton,
+  useAuth,
 } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 
 export default function Navbar() {
+  const { isLoaded, isSignedIn } = useAuth();
+
   return (
     <nav className="border-b border-stone-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -18,64 +22,100 @@ export default function Navbar() {
           <div className="w-8 h-8 bg-emerald-700 text-white rounded-full flex items-center justify-center font-bold">
             S
           </div>
-          <span className="text-xl font-semibold text-stone-900">saathi</span>
+
+          <span className="text-xl font-semibold text-stone-900">
+            saathi
+          </span>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* Desktop Navigation */}
         <div className="hidden sm:flex items-center gap-1">
           <NavLink href="/community">Community</NavLink>
           <NavLink href="/guidelines">Guidelines</NavLink>
 
-          <Show when="signed-in">
-            <NavLink href="/profile">Profile</NavLink>
+          {isLoaded && (
+            <>
+              {isSignedIn ? (
+                <>
+                  <NavLink href="/profile">Profile</NavLink>
 
-            <Link
-              href="/create"
-              className="ml-2 px-4 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full hover:bg-emerald-800 transition-colors flex items-center gap-1.5"
-            >
-              <Plus size={14} /> Share Story
-            </Link>
+                  <Link
+                    href="/create"
+                    className="ml-2 px-4 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full hover:bg-emerald-800 transition-colors flex items-center gap-1.5"
+                  >
+                    <Plus size={14} />
+                    Share Story
+                  </Link>
 
-            <div className="ml-2">
-              <UserButton />
-            </div>
-          </Show>
+                  <div className="ml-3">
+                    <UserButton />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button
+                      type="button"
+                      className="ml-2 px-4 py-1.5 border border-stone-300 text-gray-700 text-sm font-medium rounded-full hover:bg-stone-50 transition-colors"
+                    >
+                      Sign In
+                    </button>
+                  </SignInButton>
 
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <button className="ml-2 px-4 py-1.5 border border-stone-300 text-gray-700 text-sm font-medium rounded-full hover:bg-stone-50 transition-colors">
-                Sign In
-              </button>
-            </SignInButton>
-
-            <SignUpButton mode="modal">
-              <button className="px-4 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full hover:bg-emerald-800 transition-colors flex items-center gap-1.5">
-                <Plus size={14} /> Share Story
-              </button>
-            </SignUpButton>
-          </Show>
+                  <SignUpButton mode="modal">
+                    <button
+                      type="button"
+                      className="ml-2 px-4 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full hover:bg-emerald-800 transition-colors flex items-center gap-1.5"
+                    >
+                      <Plus size={14} />
+                      Join Saathi
+                    </button>
+                  </SignUpButton>
+                </>
+              )}
+            </>
+          )}
         </div>
 
-        {/* Mobile: just the share button and user button */}
+        {/* Mobile Navigation */}
         <div className="flex sm:hidden items-center gap-2">
-          <Show when="signed-in">
-            <Link
-              href="/create"
-              className="p-2 bg-emerald-700 text-white rounded-full hover:bg-emerald-800 transition-colors"
-            >
-              <Plus size={18} />
-            </Link>
+          {isLoaded && (
+            <>
+              {isSignedIn ? (
+                <>
+                  <Link
+                    href="/create"
+                    className="p-2 bg-emerald-700 text-white rounded-full hover:bg-emerald-800 transition-colors"
+                    aria-label="Share your story"
+                  >
+                    <Plus size={18} />
+                  </Link>
 
-            <UserButton />
-          </Show>
+                  <UserButton />
+                </>
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 border border-stone-300 text-gray-700 text-sm font-medium rounded-full"
+                    >
+                      Sign In
+                    </button>
+                  </SignInButton>
 
-          <Show when="signed-out">
-            <SignUpButton mode="modal">
-              <button className="px-3 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full">
-                Join
-              </button>
-            </SignUpButton>
-          </Show>
+                  <SignUpButton mode="modal">
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full"
+                    >
+                      Join
+                    </button>
+                  </SignUpButton>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
     </nav>
