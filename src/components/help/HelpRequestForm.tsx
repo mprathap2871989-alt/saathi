@@ -60,7 +60,7 @@ export default function HelpRequestForm() {
           </h2>
 
           <p className="text-xs text-gray-400 mt-0.5">
-            Only you and the Saathi admin can see this message.
+            Only you and the Solacial admin can see this message.
           </p>
         </div>
       </div>

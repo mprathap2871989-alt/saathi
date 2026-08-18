@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const cat = getCategoryById(slug);
   return {
-    title: `${cat.label} — Saathi Community`,
+    title: `${cat.label} â€” Solacial Community`,
     description: `Stories, support, and shared experiences in ${cat.label}. ${cat.desc}`,
   };
 }

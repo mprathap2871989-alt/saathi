@@ -17,8 +17,8 @@ import { getMyProfile, getOrCreateUser } from "@/actions/user";
 import { timeAgo } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "My Profile — Saathi",
-  description: "Your anonymous Saathi profile.",
+  title: "My Profile â€” Solacial",
+  description: "Your anonymous Solacial profile.",
 };
 
 const AVATAR_COLORS = [
@@ -53,7 +53,7 @@ export default async function ProfilePage() {
   }
 
   // Suspension is an expected account state.
-  // Show a friendly Saathi page instead of throwing an application error.
+  // Show a friendly Solacial page instead of throwing an application error.
   if (profile.isSuspended) {
     return (
       <>
@@ -73,7 +73,7 @@ export default async function ProfilePage() {
             </h1>
 
             <p className="text-gray-600 leading-relaxed max-w-md mx-auto">
-              Your account is currently unable to participate in the Saathi
+              Your account is currently unable to participate in the Solacial
               community.
             </p>
 
@@ -192,7 +192,7 @@ export default async function ProfilePage() {
 
         {activePosts.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <span className="text-4xl block mb-3">🌱</span>
+            <span className="text-4xl block mb-3">ðŸŒ±</span>
 
             <p className="font-semibold text-gray-700 mb-1">
               You haven&apos;t shared a story yet.

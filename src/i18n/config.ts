@@ -58,7 +58,7 @@ const enMessages = {
       headline: "You don't have to figure everything out alone.",
       subheadline: "Share your story. Find people who understand. Give and receive support — completely anonymously.",
     },
-    howItWorks: "How Saathi Works",
+    howItWorks: "How Solacial Works",
     findCommunity: "Find Your Community",
     recentStories: "Recent Stories",
     safetyPromise: "Your Safety Is Our Promise",
@@ -87,7 +87,7 @@ const enMessages = {
   },
   guidelines: {
     title: "Community Guidelines",
-    subtitle: "Saathi works because people choose kindness.",
+    subtitle: "Solacial works because people choose kindness.",
   },
   crisis: {
     label: "In crisis or feeling unsafe?",

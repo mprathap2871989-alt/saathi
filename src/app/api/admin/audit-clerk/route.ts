@@ -21,7 +21,7 @@ export async function GET() {
     }
 
     // ------------------------------------------------------------
-    // 2. Verify that the signed-in user is a Saathi admin
+    // 2. Verify that the signed-in user is a Solacial admin
     // ------------------------------------------------------------
     const adminUser = await prisma.user.findUnique({
       where: { clerkId },

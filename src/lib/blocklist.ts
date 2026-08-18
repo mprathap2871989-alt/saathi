@@ -22,7 +22,7 @@ import {
 
 /**
  * Platform-specific terms beyond the base English dataset: harassment
- * language and identity-targeted slurs relevant to Saathi's community
+ * language and identity-targeted slurs relevant to Solacial's community
  * (caste, religion, gender, sexuality — the categories explicitly named
  * as zero-tolerance in the Community Guidelines).
  *

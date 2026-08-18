@@ -11,7 +11,7 @@ import { getPosts } from "@/actions/posts";
 import { getCategoryById } from "@/lib/categories";
 
 export const metadata: Metadata = {
-  title: "Community — Saathi",
+  title: "Community â€” Solacial",
   description: "Read stories, offer support, and connect with people who understand.",
 };
 
@@ -104,7 +104,7 @@ export default async function CommunityPage({ searchParams }: PageProps) {
             <p className="text-sm text-gray-500 mt-0.5">
               {activeCat
                 ? <>{activeCat.emoji} {activeCat.label}</>
-                : "All stories · All topics"}
+                : "All stories Â· All topics"}
             </p>
           </div>
           <Link
@@ -117,7 +117,7 @@ export default async function CommunityPage({ searchParams }: PageProps) {
 
         <CrisisBanner />
 
-        {/* Filters (client island — updates URL params) */}
+        {/* Filters (client island â€” updates URL params) */}
         <div className="mt-5">
           <Suspense fallback={<div className="h-28 bg-stone-100 rounded-xl animate-pulse" />}>
             <FeedFilters
@@ -142,7 +142,7 @@ export default async function CommunityPage({ searchParams }: PageProps) {
 function EmptyFeed({ hasFilters }: { hasFilters: boolean }) {
   return (
     <div className="text-center py-16 bg-white rounded-xl border border-stone-200">
-      <span className="text-4xl block mb-3">{hasFilters ? "🔍" : "💬"}</span>
+      <span className="text-4xl block mb-3">{hasFilters ? "ðŸ”" : "ðŸ’¬"}</span>
       <p className="font-semibold text-gray-700">
         {hasFilters ? "No stories match your search" : "No stories yet"}
       </p>
@@ -152,7 +152,7 @@ function EmptyFeed({ hasFilters }: { hasFilters: boolean }) {
           : "Be the first to share your story"}
       </p>
       <Link href="/create" className="inline-block mt-4 text-emerald-700 text-sm font-medium hover:underline">
-        Share your story →
+        Share your story â†’
       </Link>
     </div>
   );

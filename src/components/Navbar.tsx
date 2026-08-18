@@ -24,7 +24,7 @@ export default function Navbar() {
           </div>
 
           <span className="text-xl font-semibold text-stone-900">
-            saathi
+            solacial
           </span>
         </Link>
 
@@ -71,7 +71,7 @@ export default function Navbar() {
                       className="ml-2 px-4 py-1.5 bg-emerald-700 text-white text-sm font-medium rounded-full hover:bg-emerald-800 transition-colors flex items-center gap-1.5"
                     >
                       <Plus size={14} />
-                      Join Saathi
+                      Join Solacial
                     </button>
                   </SignUpButton>
                 </>

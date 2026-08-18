@@ -28,7 +28,7 @@ export async function getOrCreateUser(clerkId?: string) {
     return existing;
   }
 
-  // First-time user — generate anonymous username
+  // First-time user â€” generate anonymous username
   const username = await generateUniqueUsername(async (name) => {
     const found = await prisma.user.findUnique({
       where: { username: name },
@@ -43,7 +43,7 @@ export async function getOrCreateUser(clerkId?: string) {
     data: {
       clerkId: id,
       username,
-      // Clerk email stored nowhere in our DB — we only use clerkId
+      // Clerk email stored nowhere in our DB â€” we only use clerkId
     },
   });
 }
@@ -60,7 +60,7 @@ export async function getActiveUser(clerkId?: string) {
   if (user.isSuspended) {
     return {
       user: null,
-      error: "Your account has been suspended and cannot participate in the Saathi community.",
+      error: "Your account has been suspended and cannot participate in the Solacial community.",
     };
   }
 
@@ -129,7 +129,7 @@ export async function updateUsername(newUsername: string) {
   }
 
   if (newUsername.length < 3 || newUsername.length > 30) {
-    return { error: "Username must be 3–30 characters" };
+    return { error: "Username must be 3â€“30 characters" };
   }
 
   if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {

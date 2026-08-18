@@ -43,12 +43,12 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: "Post not found — Saathi",
+      title: "Post not found â€” Solacial",
     };
   }
 
   return {
-    title: `${post.title} — Saathi`,
+    title: `${post.title} â€” Solacial`,
     description: storyPreview(post.story, 160),
     openGraph: {
       title: post.title,

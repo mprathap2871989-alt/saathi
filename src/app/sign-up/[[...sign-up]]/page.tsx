@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Shield } from "lucide-react";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Join Saathi" };
+export const metadata: Metadata = { title: "Join Solacial" };
 
 export default function SignUpPage() {
   return (
@@ -15,12 +15,12 @@ export default function SignUpPage() {
         <div className="w-9 h-9 bg-emerald-700 rounded-full flex items-center justify-center">
           <span className="text-white font-bold text-base">S</span>
         </div>
-        <span className="font-bold text-emerald-800 text-xl tracking-tight">saathi</span>
+        <span className="font-bold text-emerald-800 text-xl tracking-tight">solacial</span>
       </Link>
 
       <div className="w-full max-w-md text-center mb-6">
         <h1 className="font-serif text-2xl font-bold text-gray-900 mb-1">
-          Join Saathi
+          Join Solacial
         </h1>
         <p className="text-gray-500 text-sm">
           You don&apos;t have to figure everything out alone.
@@ -44,7 +44,7 @@ export default function SignUpPage() {
         <p className="text-xs text-emerald-800 leading-relaxed">
           <span className="font-semibold">Your anonymity is protected.</span>{" "}
           You&apos;ll be assigned a generated username like BraveSoul123.
-          Your real name is never shown to anyone on Saathi.
+          Your real name is never shown to anyone on Solacial.
         </p>
       </div>
     </div>

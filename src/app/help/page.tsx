@@ -8,7 +8,7 @@ import { getMyHelpRequests } from "@/actions/helpRequests";
 import { timeAgo } from "@/lib/utils";
 
 export const metadata = {
-  title: "Need Help? — Saathi",
+  title: "Need Help? â€” Solacial",
 };
 
 export default async function HelpPage() {
@@ -28,7 +28,7 @@ export default async function HelpPage() {
         <div className="mb-7">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <span className="text-xl">💬</span>
+              <span className="text-xl">ðŸ’¬</span>
             </div>
 
             <div>
@@ -37,15 +37,15 @@ export default async function HelpPage() {
               </h1>
 
               <p className="text-sm text-gray-500">
-                Send a private message to the Saathi team.
+                Send a private message to the Solacial team.
               </p>
             </div>
           </div>
 
           <p className="text-sm text-gray-600 leading-relaxed mt-4">
-            If you need help with something on Saathi, are unsure what to do,
+            If you need help with something on Solacial, are unsure what to do,
             or need support with a situation, you can contact us privately
-            here. Your request is visible only to you and the Saathi admin.
+            here. Your request is visible only to you and the Solacial admin.
           </p>
         </div>
 
@@ -125,7 +125,7 @@ export default async function HelpPage() {
                   {request.adminResponse && (
                     <div className="mt-4 border-l-4 border-emerald-500 bg-emerald-50 rounded-r-lg p-3">
                       <p className="text-xs font-bold text-emerald-700 mb-1">
-                        Saathi Admin
+                        Solacial Admin
                       </p>
 
                       <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">

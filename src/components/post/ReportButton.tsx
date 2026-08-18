@@ -73,7 +73,7 @@ export default function ReportButton({ type, targetId, postId, className }: Prop
                 <CheckCircle size={36} className="text-emerald-500 mx-auto mb-2" />
                 <p className="font-semibold text-gray-900">Report submitted</p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Our moderation team reviews within 24 hours. Thank you for keeping Saathi safe.
+                  Our moderation team reviews within 24 hours. Thank you for keeping Solacial safe.
                 </p>
               </div>
             ) : (

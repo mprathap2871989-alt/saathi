@@ -14,7 +14,7 @@ import { Resend } from "resend";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Saathi Moderation <onboarding@resend.dev>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Solacial Moderation <onboarding@resend.dev>";
 
 export interface ReportAlertDetails {
   reportType: "post" | "comment";
@@ -51,7 +51,7 @@ export async function notifyAdminOfNewReport(details: ReportAlertDetails): Promi
       to:      adminEmail,
       subject: `New report: ${details.reportType}`,
       text: [
-        `A ${details.reportType} was reported on Saathi.`,
+        `A ${details.reportType} was reported on Solacial.`,
         ``,
         `Type:      ${details.reportType}`,
         `Content ID: ${details.contentId}`,

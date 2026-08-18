@@ -18,13 +18,22 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Saathi — You don't have to figure everything out alone",
+  title: "Solacial — You don't have to carry it alone",
   description:
-    "A safe, anonymous support community. Share your story, find people who understand, and give and receive support — completely free.",
-  keywords: ["support", "community", "anonymous", "India"],
+    "A quiet, anonymous place to share what you're going through, find people who understand, and feel a little less alone.",
+  keywords: [
+    "Solacial",
+    "anonymous support",
+    "support community",
+    "shared experiences",
+    "loneliness",
+    "mental wellbeing",
+    "India",
+  ],
   openGraph: {
-    title: "Saathi — You don't have to figure everything out alone",
-    description: "Share your story. Find support. Feel less alone.",
+    title: "Solacial — You don't have to carry it alone",
+    description:
+      "Share what you're going through. Find people who understand. Feel a little less alone.",
     type: "website",
   },
 };

@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In — Saathi",
+  title: "Sign In â€” Solacial",
 };
 
 export default function SignInPage() {
@@ -17,7 +17,7 @@ export default function SignInPage() {
         </div>
 
         <span className="font-bold text-emerald-800 text-xl tracking-tight">
-          saathi
+          solacial
         </span>
       </Link>
 
@@ -46,7 +46,7 @@ export default function SignInPage() {
 
       <p className="text-xs text-gray-400 mt-6 text-center max-w-xs leading-relaxed">
         You will be assigned an anonymous username automatically.
-        No real name is shown to anyone on Saathi.
+        No real name is shown to anyone on Solacial.
       </p>
     </div>
   );
