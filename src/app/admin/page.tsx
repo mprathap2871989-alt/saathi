@@ -19,10 +19,10 @@ import { getAllUsers, getAdminStats } from "@/actions/admin";
 import { getAllHelpRequests } from "@/actions/helpRequests";
 import { timeAgo } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Admin â€” Solacial" };
+export const metadata: Metadata = { title: "Admin — Solacial" };
 
 export default async function AdminPage() {
-  // â”€â”€ Auth & admin guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Auth & admin guard ────────────────────────────────────────────────
   const { userId: clerkId } = await auth();
 
   if (!clerkId) {
@@ -37,7 +37,7 @@ export default async function AdminPage() {
     redirect("/community");
   }
 
-  // â”€â”€ Fetch data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fetch data ────────────────────────────────────────────────────────
   const [
     rawReports,
     rawPosts,
@@ -52,7 +52,7 @@ export default async function AdminPage() {
     getAdminStats(),
   ]);
 
-  // â”€â”€ Serialise reports for client component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Serialise reports for client component ────────────────────────────
   const reports: AdminReport[] = rawReports.map(
     (r: (typeof rawReports)[number]) => ({
       id: r.id,
@@ -77,7 +77,7 @@ export default async function AdminPage() {
     })
   );
 
-  // â”€â”€ Serialise posts for client component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Serialise posts for client component ──────────────────────────────
   const posts: AdminPost[] = rawPosts.map(
     (p: (typeof rawPosts)[number]) => ({
       id: p.id,
@@ -90,7 +90,7 @@ export default async function AdminPage() {
     })
   );
 
-  // â”€â”€ Serialise users for client component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Serialise users for client component ──────────────────────────────
   const users: AdminUser[] = rawUsers.map(
     (u: (typeof rawUsers)[number]) => ({
       id: u.id,
@@ -101,7 +101,7 @@ export default async function AdminPage() {
     })
   );
 
-  // â”€â”€ Serialise help requests for client component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Serialise help requests for client component ─────────────────────
   const helpRequests: AdminHelpRequest[] = rawHelpRequests.map(
     (r: (typeof rawHelpRequests)[number]) => ({
       id: r.id,
@@ -156,7 +156,7 @@ export default async function AdminPage() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <span className="text-lg">âš™ï¸</span>
+            <span className="text-lg">⚙️</span>
           </div>
 
           <div>

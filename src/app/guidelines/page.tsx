@@ -4,53 +4,53 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Community Guidelines â€” Solacial",
+  title: "Community Guidelines — Solacial",
   description: "How we keep Solacial a safe, supportive, and judgment-free space.",
 };
 
 const RULES = [
   {
-    emoji: "ðŸ’›",
+    emoji: "💛",
     title: "Lead with compassion",
-    body: "Before you respond, ask: is this what I'd want someone to say to me on my worst day? Empathy first, advice second â€” and only if the person has asked for it.",
+    body: "Before you respond, ask: is this what I'd want someone to say to me on my worst day? Empathy first, advice second — and only if the person has asked for it.",
   },
   {
-    emoji: "ðŸ”’",
+    emoji: "🔒",
     title: "Protect everyone's anonymity",
     body: "Never try to identify who someone is based on their story. Do not share, screenshot, or discuss posts outside of Solacial. Anonymity is what makes honest sharing possible.",
   },
   {
-    emoji: "ðŸš«",
+    emoji: "🚫",
     title: "Zero tolerance for harm",
     body: "Harassment, bullying, hate speech, slurs, threats, or any content targeting a person's identity (religion, caste, gender, sexuality, disability) will result in immediate removal and account suspension.",
   },
   {
-    emoji: "ðŸŒ±",
+    emoji: "🌱",
     title: "Share experience, not prescriptions",
-    body: '"In my experienceâ€¦" is more helpful than "you shouldâ€¦". What worked for you may not work for everyone. Offer your perspective as one data point, not the answer.',
+    body: '"In my experience…" is more helpful than "you should…". What worked for you may not work for everyone. Offer your perspective as one data point, not the answer.',
   },
   {
-    emoji: "âš ï¸",
+    emoji: "⚠️",
     title: "Handle crisis moments carefully",
-    body: "If someone appears to be in immediate danger, respond with care and share the iCall helpline: 9152987821. Do not try to manage a crisis yourself â€” you are not alone in this responsibility.",
+    body: "If someone appears to be in immediate danger, respond with care and share the iCall helpline: 9152987821. Do not try to manage a crisis yourself — you are not alone in this responsibility.",
   },
   {
-    emoji: "ðŸ“µ",
+    emoji: "📵",
     title: "No spam or self-promotion",
     body: "No links to services, products, social media profiles, or businesses. No unsolicited advice about paid services. This is a support space, not a marketplace.",
   },
   {
-    emoji: "ðŸ³ï¸â€ðŸŒˆ",
+    emoji: "🏳️‍🌈",
     title: "Inclusive by default",
     body: "All people are welcome here regardless of gender, sexuality, religion, caste, class, ethnicity, age, or background. Solacial is built for everyone navigating a difficult moment.",
   },
   {
-    emoji: "ðŸ§˜",
+    emoji: "🧘",
     title: "No unsolicited diagnosis",
-    body: "Please do not suggest mental health diagnoses, medications, or treatments â€” even with good intentions. Encourage professional support, but leave medical guidance to professionals.",
+    body: "Please do not suggest mental health diagnoses, medications, or treatments — even with good intentions. Encourage professional support, but leave medical guidance to professionals.",
   },
   {
-    emoji: "ðŸ¤",
+    emoji: "🤝",
     title: "Keep it about support, not debate",
     body: "This is not a debate platform. Political arguments, religious debates, or adversarial discourse have no place here. If you disagree with someone's choices, you can choose not to respond.",
   },
@@ -68,18 +68,18 @@ export default function GuidelinesPage() {
           </h1>
           <p className="text-gray-500 leading-relaxed">
             Solacial exists because people choose kindness when it matters most.
-            These guidelines protect that trust â€” for everyone who shares here.
+            These guidelines protect that trust — for everyone who shares here.
           </p>
         </div>
 
         {/* Crisis callout */}
         <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-8 flex items-start gap-3">
-          <span className="text-2xl flex-shrink-0">ðŸ†˜</span>
+          <span className="text-2xl flex-shrink-0">🆘</span>
           <div>
             <p className="font-semibold text-amber-900 mb-1">Crisis support is always available</p>
             <p className="text-sm text-amber-800 leading-relaxed">
-              iCall (India): <a href="tel:9152987821" className="font-bold underline">9152987821</a> Â· Monâ€“Sat, 8amâ€“10pm<br />
-              Vandrevala Foundation: <a href="tel:18602662345" className="font-bold underline">1860-2662-345</a> Â· 24/7
+              iCall (India): <a href="tel:9152987821" className="font-bold underline">9152987821</a> · Mon-Sat, 8am-10pm<br />
+              Vandrevala Foundation: <a href="tel:18602662345" className="font-bold underline">1860-2662-345</a> · 24/7
             </p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function GuidelinesPage() {
               "No warnings for severe violations (hate speech, threats, crisis mishandling).",
             ].map((point) => (
               <div key={point} className="flex items-start gap-2">
-                <span className="text-emerald-400 flex-shrink-0 mt-0.5">â†’</span>
+                <span className="text-emerald-400 flex-shrink-0 mt-0.5">→</span>
                 <span>{point}</span>
               </div>
             ))}
@@ -131,7 +131,7 @@ export default function GuidelinesPage() {
             href="/community"
             className="inline-block mt-4 text-emerald-700 text-sm font-medium hover:underline"
           >
-            Return to Community â†’
+            Return to Community →
           </Link>
         </div>
       </main>

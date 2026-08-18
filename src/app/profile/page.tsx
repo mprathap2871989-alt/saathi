@@ -17,7 +17,7 @@ import { getMyProfile, getOrCreateUser } from "@/actions/user";
 import { timeAgo } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "My Profile â€” Solacial",
+  title: "My Profile — Solacial",
   description: "Your anonymous Solacial profile.",
 };
 
@@ -192,7 +192,7 @@ export default async function ProfilePage() {
 
         {activePosts.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <span className="text-4xl block mb-3">ðŸŒ±</span>
+            <span className="text-4xl block mb-3">🌱</span>
 
             <p className="font-semibold text-gray-700 mb-1">
               You haven&apos;t shared a story yet.

@@ -8,7 +8,7 @@ import { getMyHelpRequests } from "@/actions/helpRequests";
 import { timeAgo } from "@/lib/utils";
 
 export const metadata = {
-  title: "Need Help? â€” Solacial",
+  title: "Need Help? — Solacial",
 };
 
 export default async function HelpPage() {
@@ -28,7 +28,7 @@ export default async function HelpPage() {
         <div className="mb-7">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <span className="text-xl">ðŸ’¬</span>
+              <span className="text-xl">💬</span>
             </div>
 
             <div>
