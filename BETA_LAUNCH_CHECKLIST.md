@@ -1,4 +1,4 @@
-# Saathi — Beta Launch Checklist
+# Solacial — Beta Launch Checklist
 
 Practical, for a solo founder. Every item here is something to actually do or actually check —
 not a restatement of engineering work already done. Full technical detail behind each item
@@ -19,7 +19,7 @@ lives in `PHASE1_RELEASE_AUDIT.md` (code/security) and `PRODUCTION_READINESS_AUD
 - [ ] `CLERK_WEBHOOK_SECRET` — from Clerk Dashboard → Webhooks, **after** the webhook endpoint is created (see Authentication section below)
 - [ ] `RESEND_API_KEY` and `ADMIN_EMAIL` — set to a real email you'll actually check
 - [ ] `EMAIL_FROM` — either leave as the default `onboarding@resend.dev` (works immediately, but only delivers to the email tied to your Resend account) or verify a domain in Resend and set your own sender
-- [ ] `NEXT_PUBLIC_APP_URL` — set to your real production URL (e.g. `https://saathi.vercel.app` or your custom domain), **not** `http://localhost:3000`. Getting this wrong will break every Server Action (post creation, comments, votes, reports, admin actions) via Next.js's origin check — this is the single highest-impact env var to double-check.
+- [ ] `NEXT_PUBLIC_APP_URL` — set to your real production URL (e.g. `https://Solacial.vercel.app` or your custom domain), **not** `http://localhost:3000`. Getting this wrong will break every Server Action (post creation, comments, votes, reports, admin actions) via Next.js's origin check — this is the single highest-impact env var to double-check.
 - [ ] Confirm Vercel is building with **Node 18.18+** (Next.js 15.2's minimum). No `engines` field is currently pinned in `package.json`, so Vercel will use its own default — check your Vercel project's Node version setting explicitly rather than assuming.
 
 ### Database
@@ -105,7 +105,7 @@ All observable today with zero new dependencies, via Prisma Studio or direct SQL
 | Registrations | `SELECT COUNT(*) FROM "User"` (or `getAdminStats()`'s existing `userCount`) |
 | First post created (per user) | `SELECT "userId", MIN("createdAt") FROM "Post" GROUP BY "userId"` |
 | Replies | `SELECT COUNT(*) FROM "Comment"` (or `getAdminStats()`'s existing `commentCount`) |
-| Returning users | **Not directly queryable from Saathi's own DB** — but Clerk's own dashboard (Clerk Dashboard → Users → a user's detail page) already shows last-sign-in time per user, at zero additional cost. Good enough for a solo-founder beta; don't build a custom analytics table for this. |
+| Returning users | **Not directly queryable from Solacial's own DB** — but Clerk's own dashboard (Clerk Dashboard → Users → a user's detail page) already shows last-sign-in time per user, at zero additional cost. Good enough for a solo-founder beta; don't build a custom analytics table for this. |
 | Reports | `getAdminStats()`'s existing `reportCount`, or the `/admin` dashboard directly |
 
 No analytics dependency, no tracking pixel, no new table. This is checking the database and Clerk's own dashboard by hand — appropriate for beta volume, not something to automate yet.

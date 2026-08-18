@@ -1,4 +1,4 @@
-# Saathi — Code Review & MVP Launch Checklist
+# Solacial — Code Review & MVP Launch Checklist
 
 > Senior advisor review. Be honest. Ship nothing until this is done.
 
@@ -251,4 +251,4 @@ Ask your early users directly. Read the comments. That's your product-market fit
 
 ---
 
-*The goal is not a feature-complete product. The goal is for one person to feel genuinely less alone because Saathi exists.*
+*The goal is not a feature-complete product. The goal is for one person to feel genuinely less alone because Solacial exists.*

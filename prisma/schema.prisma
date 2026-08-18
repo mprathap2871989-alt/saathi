@@ -165,7 +165,7 @@ model Report {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELP REQUEST
-// Private support request between a Saathi user and the admin.
+// Private support request between a Solacial user and the admin.
 // ─────────────────────────────────────────────────────────────────────────────
 
 model HelpRequest {

@@ -14,8 +14,8 @@ analysis behind ADR-0001.
 
 ### Context
 
-Saathi's monetization path (B2B/B2B2C — see `BUSINESS_PRINCIPLES.md`) will eventually require
-organization-scoped private communities alongside the existing public Saathi community. No
+Solacial's monetization path (B2B/B2B2C — see `BUSINESS_PRINCIPLES.md`) will eventually require
+organization-scoped private communities alongside the existing public Solacial community. No
 organization-related schema exists today; `Post`, `Comment`, and `Category` are entirely
 global. The monetization audit evaluated whether any schema change is needed *now* to avoid a
 painful migration *later*, and concluded no schema change is required before launch — but the
@@ -31,7 +31,7 @@ Post.organizationId    String?  // nullable, no default constraint beyond NULL
 Comment.organizationId String?  // same
 ```
 
-**`NULL` means "public Saathi community"** — the exact same content, visibility, and access
+**`NULL` means "public Solacial community"** — the exact same content, visibility, and access
 pattern that exists today. This applies retroactively to every row that exists at the time the
 column is added: no backfill, no default-organization assignment, no migration of existing
 content. Public content stays public by construction, not by a migration script someone has to
@@ -67,7 +67,7 @@ in this codebase, rather than hand-rolling a parallel org/membership system.
 
 ### Alternatives Considered
 
-- **Backfilling a default "Saathi Public" organization row and assigning it to every existing
+- **Backfilling a default "Solacial Public" organization row and assigning it to every existing
   post.** Rejected — adds a migration step with no benefit over `NULL`, and creates a
   meaningless organization row that every query has to know to treat as special anyway.
 - **A separate `OrgPost`/`OrgComment` table, parallel to `Post`/`Comment`.** Rejected — doubles

@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const categoriesOnly = process.argv.includes("--categories-only");
 
 async function main() {
-  console.log("🌱 Seeding Saathi database...");
+  console.log("🌱 Seeding Solacial database...");
 
   // ── Categories ──────────────────────────────
   // Derived from src/lib/categories.ts (the single source of truth for
@@ -286,7 +286,7 @@ If you've been putting it off: you deserve support too. Whatever you're carrying
   }
   console.log("✅ Helpful votes seeded");
 
-  console.log("\n🎉 Saathi database ready. Run: npm run dev");
+  console.log("\n🎉 Solacial database ready. Run: npm run dev");
 }
 
 main()

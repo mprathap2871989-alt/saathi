@@ -1,7 +1,7 @@
-# Saathi — Business Principles
+# Solacial — Business Principles
 
 This document exists so that product, engineering, and business decisions stay aligned as
-Saathi grows — especially once monetization conversations start involving real organizations,
+Solacial grows — especially once monetization conversations start involving real organizations,
 contracts, and revenue targets. Nothing here is aspirational; each principle is either already
 true of the current architecture, or is a firm constraint on what gets built next. Sourced from
 `MONETIZATION_AUDIT.md` (approved) — this document is the durable summary of that audit's
@@ -21,7 +21,7 @@ weakening this promise to work, the proposal is rejected — not the promise.
 
 **Organizations pay. People receive support for free.**
 
-Saathi's monetization path is B2B / B2B2C: universities, schools, hospitals, NGOs, corporate
+Solacial's monetization path is B2B / B2B2C: universities, schools, hospitals, NGOs, corporate
 Employee Assistance Programs, government programs, and community organizations may pay for
 verified, managed community spaces, aggregate insight dashboards, or certification programs.
 Individual users seeking peer support never see a paywall, regardless of whether their
@@ -35,7 +35,7 @@ or feature update.
 
 1. **Existing public content can never be retroactively paywalled or org-gated.**
    Enforced by the tenant-isolation approach in `ARCHITECTURE_DECISIONS.md`: a `NULL`
-   organization reference means "public Saathi community," permanently, for every post
+   organization reference means "public Solacial community," permanently, for every post
    and comment that exists today and every one created before organizations exist.
 
 2. **User conversations are never sold.**
@@ -45,8 +45,8 @@ or feature update.
    that it's safe because the use case seems reasonable.
 
 3. **User identities are never sold.**
-   Saathi's own database stores no PII — no email, name, or contact information. That
-   data lives only with the auth provider (Clerk), not in Saathi's schema. Any future
+   Solacial's own database stores no PII — no email, name, or contact information. That
+   data lives only with the auth provider (Clerk), not in Solacial's schema. Any future
    change that adds PII fields to `User` is a privacy-review trigger, not a routine
    addition.
 
